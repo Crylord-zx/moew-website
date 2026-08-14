@@ -1,13 +1,14 @@
 {
-  "name": "little-pages",
+  "name": "meow-webpages",
   "version": "1.0.0",
   "private": true,
-  "description": "Public template gallery + customizer (site-server.js) and a local-only admin panel (admin-server.js) for editing master templates.",
+  "description": "Public template gallery + customizer (site-server.js), a local-only admin panel (admin-server.js) for editing master templates, and a merged single-deployment entry point (server.js) that runs both sharing one filesystem.",
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "start": "node site-server.js",
+    "start": "node server.js",
+    "site": "node site-server.js",
     "admin": "node admin-server.js"
   },
   "dependencies": {}

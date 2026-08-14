@@ -351,14 +351,21 @@ function serveStatic(req, res, urlPath) {
 }
 
 // clean up any leftover preview temp files from previous runs
-try {
-  fs.mkdirSync(generatedDir, { recursive: true });
-  for (const f of fs.readdirSync(generatedDir)) {
-    if (f.startsWith('_preview-')) fs.unlinkSync(path.join(generatedDir, f));
-  }
-} catch {}
+function cleanupStalePreviews() {
+  try {
+    fs.mkdirSync(generatedDir, { recursive: true });
+    for (const f of fs.readdirSync(generatedDir)) {
+      if (f.startsWith('_preview-')) fs.unlinkSync(path.join(generatedDir, f));
+    }
+  } catch {}
+}
 
-const server = http.createServer((req, res) => {
+// The actual request handler, exported so a merged single-process server
+// (see server.js) can route to it by hostname alongside the admin panel's
+// handler — sharing one filesystem so admin edits are visible immediately,
+// instead of the two servers only being reachable as separate deployments
+// with separate disks. Still fully runnable standalone (below).
+function handleSiteRequest(req, res) {
   try {
     const pathname = decodeURIComponent(req.url.split('?')[0]);
 
@@ -414,24 +421,35 @@ const server = http.createServer((req, res) => {
     console.error('request handler error:', e);
     try { res.writeHead(500); res.end('Internal error'); } catch {}
   }
-});
-
-// A single bad request or edge-case bug should never take the whole site
-// down for everyone else — log it and keep serving.
-process.on('uncaughtException', (e) => console.error('uncaughtException:', e));
-process.on('unhandledRejection', (e) => console.error('unhandledRejection:', e));
-
-// Most hosting platforms (and `systemctl stop`, container restarts, etc.)
-// signal a shutdown with SIGTERM — exit cleanly instead of being killed
-// mid-request.
-function shutdown() {
-  console.log('Shutting down…');
-  server.close(() => process.exit(0));
-  setTimeout(() => process.exit(0), 5000).unref();
 }
-process.on('SIGTERM', shutdown);
-process.on('SIGINT', shutdown);
 
-server.listen(port, host, () => {
-  console.log(`Public site: http://localhost:${port}/`);
-});
+module.exports = { handleSiteRequest, cleanupStalePreviews };
+
+// Only actually start listening when run directly (`node site-server.js`).
+// When required by server.js (the merged single-deployment entry point),
+// only the handler function above is used — server.js owns the listen()
+// call, port, and process-level guards instead.
+if (require.main === module) {
+  cleanupStalePreviews();
+  const server = http.createServer(handleSiteRequest);
+
+  // A single bad request or edge-case bug should never take the whole site
+  // down for everyone else — log it and keep serving.
+  process.on('uncaughtException', (e) => console.error('uncaughtException:', e));
+  process.on('unhandledRejection', (e) => console.error('unhandledRejection:', e));
+
+  // Most hosting platforms (and `systemctl stop`, container restarts, etc.)
+  // signal a shutdown with SIGTERM — exit cleanly instead of being killed
+  // mid-request.
+  function shutdown() {
+    console.log('Shutting down…');
+    server.close(() => process.exit(0));
+    setTimeout(() => process.exit(0), 5000).unref();
+  }
+  process.on('SIGTERM', shutdown);
+  process.on('SIGINT', shutdown);
+
+  server.listen(port, host, () => {
+    console.log(`Public site: http://localhost:${port}/`);
+  });
+}

@@ -354,7 +354,13 @@ async function handleAuth(req, res, pathname) {
   return false; // not an auth route
 }
 
-http.createServer((req, res) => {
+// The actual request handler, exported so a merged single-process server
+// (see server.js) can route to it by hostname alongside the public site's
+// handler — sharing one filesystem so admin edits are visible immediately
+// on the public side, instead of the two servers only being reachable as
+// separate deployments with separate disks. Still fully runnable
+// standalone (below).
+function handleAdminRequest(req, res) {
   const pathname = decodeURIComponent(req.url.split('?')[0]);
 
   // login/logout are the only routes reachable without a session
@@ -403,10 +409,20 @@ http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': mime[ext] || 'application/octet-stream' });
     res.end(data);
   });
-}).listen(port, host, () => {
-  console.log(`Admin panel: http://localhost:${port}/admin.html`);
-  console.log(`Templates:   http://localhost:${port}/templates/<slug>.html`);
-  if (!loadAuthConfig()) {
-    console.log(`\n⚠ No admin password set yet. Run: node set-admin-password.js <username> <password>\n`);
-  }
-});
+}
+
+module.exports = { handleAdminRequest, loadAuthConfig };
+
+// Only actually start listening when run directly (`node admin-server.js`).
+// When required by server.js (the merged single-deployment entry point),
+// only the handler function above is used — server.js owns the listen()
+// call, port, and process-level guards instead.
+if (require.main === module) {
+  http.createServer(handleAdminRequest).listen(port, host, () => {
+    console.log(`Admin panel: http://localhost:${port}/admin.html`);
+    console.log(`Templates:   http://localhost:${port}/templates/<slug>.html`);
+    if (!loadAuthConfig()) {
+      console.log(`\n⚠ No admin password set yet. Run: node set-admin-password.js <username> <password>\n`);
+    }
+  });
+}

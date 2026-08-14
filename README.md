@@ -1,24 +1,54 @@
 # Meow Webpages
 
 A small template gallery: pick a design, customize your own text/photos, get a
-private shareable link. Two servers, two very different audiences:
+private shareable link. Two logical halves, two very different audiences:
 
-| | `site-server.js` | `admin-server.js` |
+| | Public site | Admin panel |
 |---|---|---|
 | Who | The public, anyone with the link | You, logged in with a password |
-| Port (default) | 8800 | 8899 |
 | Edits master templates? | Never | Yes |
 | Requires login? | No (nothing to log into) | **Yes — every route** |
 
-## Running locally
+There are two ways to run them, depending on where you're deploying:
+
+### Option A — one deployment, `server.js` (recommended for PaaS hosts like Hostinger)
+
+Most app-hosting platforms give each deployment its own isolated
+filesystem. If you deploy the public site and admin panel as two separate
+deployments, an edit saved in the admin panel lands on *that deployment's
+disk* — the public site is a different instance and never sees it.
+
+`server.js` runs both in **one process on one shared filesystem**, so an
+admin save is visible on the public site instantly. It picks which one
+answers each request by hostname: anything starting with `admin.` (e.g.
+`admin.yourdomain.com`) gets the admin panel; everything else gets the
+public site.
 
 ```
 node set-admin-password.js youruser yourpassword   # one-time setup
-npm start                                          # public site  -> http://localhost:8800
-npm run admin                                       # admin panel  -> http://localhost:8899
+npm start                                          # -> node server.js, one port
 ```
+Point your main domain **and** an `admin.<yourdomain>` subdomain at the
+same deployment. Optionally set `ADMIN_HOST=admin.yourdomain.com` as an
+env var if you want an exact match instead of the "starts with `admin.`"
+default.
 
-No dependencies to install — both servers use only Node's built-in modules.
+### Option B — two separate processes, `site-server.js` + `admin-server.js`
+
+Better for a VPS where you're already running things as genuinely separate
+services (or just for local dev — running two servers locally is easy to
+open two browser tabs against).
+
+```
+node set-admin-password.js youruser yourpassword   # one-time setup
+npm run site                                       # public site  -> http://localhost:8800
+npm run admin                                      # admin panel  -> http://localhost:8899
+```
+**Only use this for a host where both processes share the same disk**
+(a single VPS, for example). On a PaaS where each deployment is isolated,
+use Option A instead — otherwise admin edits won't show up publicly.
+
+No dependencies to install — every mode uses only Node's built-in modules.
 Requires Node 18+.
 
 ## Admin panel login
@@ -64,9 +94,16 @@ on startup.
 ### 1. Pick a host
 
 Any host that can run a long-lived Node process works: a VPS (DigitalOcean,
-Linode, Hetzner...), Railway, Render, Fly.io, or your own server. This app
-is a single Node process with no database and no build step — copy the
-`extracted-templates` folder up and run it.
+Linode, Hetzner...), Railway, Render, Fly.io, Hostinger, or your own server.
+This app is a single Node process with no database and no build step — copy
+the `extracted-templates` folder up and run it.
+
+**On a PaaS with per-deployment isolated filesystems (Hostinger, Railway,
+Render, etc.)**: deploy once, Entry file `server.js` (Option A above), and
+point both your main domain and an `admin.` subdomain at that one
+deployment. Deploying `site-server.js` and `admin-server.js` as two
+separate deployments there means admin edits won't appear on the public
+site — see the Option A/B explanation above for why.
 
 ### 2. Environment variables
 
