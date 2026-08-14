@@ -1,4 +1,4 @@
-# Little Pages
+# Meow Webpages
 
 A small template gallery: pick a design, customize your own text/photos, get a
 private shareable link. Two servers, two very different audiences:
@@ -82,15 +82,15 @@ or a systemd service.
 **pm2:**
 ```
 npm install -g pm2
-pm2 start site-server.js --name little-pages
+pm2 start site-server.js --name meow-webpages
 pm2 save
 pm2 startup   # follow the printed instructions to survive reboots
 ```
 
-**systemd** (`/etc/systemd/system/little-pages.service`):
+**systemd** (`/etc/systemd/system/meow-webpages.service`):
 ```ini
 [Unit]
-Description=Little Pages site
+Description=Meow Webpages site
 After=network.target
 
 [Service]
@@ -103,7 +103,7 @@ Environment=PORT=8800
 [Install]
 WantedBy=multi-user.target
 ```
-Then: `sudo systemctl enable --now little-pages`
+Then: `sudo systemctl enable --now meow-webpages`
 
 ### 4. Put a real domain + HTTPS in front of it
 
@@ -139,7 +139,7 @@ the public site:
 
 ```
 node set-admin-password.js youruser yourpassword
-pm2 start admin-server.js --name little-pages-admin
+pm2 start admin-server.js --name meow-webpages-admin
 pm2 save
 ```
 

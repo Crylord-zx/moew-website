@@ -9,7 +9,21 @@
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--color-text); background: var(--color-bg); }
+body {
+  margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--color-text); background: var(--color-bg);
+  animation: pageFadeIn 0.35s ease both;
+}
+@keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 #layout { display: flex; min-height: 100vh; }
 
@@ -23,16 +37,22 @@ body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sa
 #logoutBtn {
   background: none; border: 1px solid var(--color-border); border-radius: 999px;
   padding: 4px 10px; font-size: 11px; color: var(--color-muted); cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
-#logoutBtn:hover { color: var(--color-primary-dark); border-color: var(--color-primary); }
+#logoutBtn:hover { color: var(--color-primary-dark); border-color: var(--color-primary); transform: translateY(-1px); }
+#logoutBtn:active { transform: translateY(0) scale(0.96); }
 
 #mailboxBtn {
   width: 100%; display: flex; align-items: center; justify-content: space-between;
   background: #faf7ff; border: 1px solid var(--color-border); border-radius: 10px;
   padding: 10px 12px; font-size: 13px; font-weight: 600; color: var(--color-text);
   cursor: pointer; margin-bottom: 16px;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
-#mailboxBtn:hover { background: #f1ecfb; }
+#mailboxBtn:hover { background: #f1ecfb; transform: translateY(-1px); }
+#mailboxBtn:active { transform: translateY(0) scale(0.98); }
+#mailboxBtn .count { transition: transform 0.15s ease; }
+#mailboxBtn:hover .count { transform: scale(1.1); }
 #mailboxBtn .count {
   background: var(--color-primary); color: #fff; border-radius: 999px;
   font-size: 11px; font-weight: 700; padding: 1px 7px;
@@ -45,9 +65,12 @@ body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sa
   width: 100%; text-align: left; background: none; border: none; cursor: pointer;
   padding: 8px; border-radius: 10px; font-size: 13px; color: var(--color-text);
   display: flex; align-items: center; gap: 10px;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
-#templateList button:hover { background: #f1ecfb; }
+#templateList button:hover { background: #f1ecfb; transform: translateX(2px); }
 #templateList button.active { background: var(--color-primary); color: #fff; }
+#templateList .thumb { transition: transform 0.15s ease; }
+#templateList button:hover .thumb { transform: scale(1.08); }
 #templateList button.active .slug { color: rgba(255,255,255,0.75); }
 #templateList .thumb {
   width: 44px; height: 44px; border-radius: 8px; object-fit: cover; flex-shrink: 0;
@@ -84,15 +107,29 @@ body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sa
 #editorTitle { margin: 0; font-size: 22px; }
 .header-actions { display: flex; gap: 10px; }
 
-.btn { display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 10px; padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.btn {
+  position: relative; overflow: hidden;
+  display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 10px;
+  padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none;
+  transition: background 0.15s ease, transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
+}
+.btn .ripple {
+  position: absolute; border-radius: 50%; transform: scale(0);
+  background: rgba(255,255,255,0.55); pointer-events: none;
+  animation: rippleOut 0.55s ease-out forwards;
+}
+.btn.secondary .ripple { background: rgba(124, 58, 237, 0.25); }
+@keyframes rippleOut { to { transform: scale(2.6); opacity: 0; } }
 .btn.primary { background: var(--color-primary); color: #fff; }
-.btn.primary:hover { background: var(--color-primary-dark); }
+.btn.primary:hover { background: var(--color-primary-dark); box-shadow: 0 6px 16px rgba(124, 58, 237, 0.3); transform: translateY(-1px); }
 .btn.secondary { background: #fff; color: var(--color-primary-dark); border: 1px solid var(--color-border); }
+.btn.secondary:hover { transform: translateY(-1px); border-color: var(--color-primary); }
+.btn:active { transform: translateY(0) scale(0.96); }
 .btn.small { padding: 6px 12px; font-size: 12px; }
 
-#saveStatus { min-height: 20px; margin: 10px 0; font-size: 13px; }
-#saveStatus.ok { color: #16a34a; }
-#saveStatus.err { color: #dc2626; }
+#saveStatus { min-height: 20px; margin: 10px 0; font-size: 13px; transition: color 0.15s ease; }
+#saveStatus.ok { color: #16a34a; animation: fadeInUp 0.25s ease both; }
+#saveStatus.err { color: #dc2626; animation: fadeInUp 0.25s ease both; }
 
 #historyPanel {
   background: #fff; border: 1px solid var(--color-border); border-radius: 16px;
@@ -104,6 +141,8 @@ body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sa
 #historyList li {
   display: flex; align-items: center; justify-content: space-between;
   padding: 8px 10px; border-radius: 8px; font-size: 13px;
+  transition: background 0.15s ease;
+  animation: fadeInUp 0.25s ease both;
 }
 #historyList li:hover { background: #f7f4fd; }
 
@@ -113,7 +152,10 @@ body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sa
   display: flex; align-items: center; gap: 14px;
   background: #fff; border: 1px solid var(--color-border); border-radius: 14px;
   padding: 14px 18px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  animation: fadeInUp 0.3s ease both;
 }
+.mail-row:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(124, 58, 237, 0.12); }
 .mail-row .mail-main { flex: 1; min-width: 0; }
 .mail-row .mail-slug { font-weight: 700; font-size: 14px; text-transform: capitalize; }
 .mail-row .mail-meta { font-size: 12px; color: var(--color-muted); margin-top: 2px; }
@@ -145,7 +187,12 @@ body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sa
   #previewPane { width: 100%; position: static; }
 }
 
-.section-card { background: #fff; border: 1px solid var(--color-border); border-radius: 16px; padding: 20px 22px; }
+.section-card {
+  background: #fff; border: 1px solid var(--color-border); border-radius: 16px; padding: 20px 22px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  animation: fadeInUp 0.3s ease both;
+}
+.section-card:hover { border-color: #d7c9f7; box-shadow: 0 4px 16px rgba(124, 58, 237, 0.08); }
 .section-card h3 { margin: 0 0 4px; font-size: 15px; text-transform: capitalize; }
 .section-card .kind { color: var(--color-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 16px; }
 
@@ -157,12 +204,20 @@ body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sa
   width: 100%; border: 1px solid var(--color-border); border-radius: 10px;
   padding: 10px 12px; font-size: 14px; font-family: inherit; color: var(--color-text);
   background: #fbfaff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 .field textarea { resize: vertical; min-height: 70px; }
-.field input[type="text"]:focus, .field textarea:focus { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+.field input[type="text"]:focus, .field textarea:focus {
+  outline: none; border-color: var(--color-primary); background: #fff;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
 
 .asset-field { display: flex; align-items: center; gap: 12px; }
-.asset-preview { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; background: #efe9fb; flex-shrink: 0; border: 1px solid var(--color-border); }
+.asset-preview {
+  width: 56px; height: 56px; border-radius: 10px; object-fit: cover; background: #efe9fb; flex-shrink: 0; border: 1px solid var(--color-border);
+  transition: transform 0.15s ease;
+}
+.asset-field:hover .asset-preview { transform: scale(1.06); }
 .asset-preview.audio { display: flex; align-items: center; justify-content: center; font-size: 20px; }
 .asset-controls { flex: 1; display: flex; flex-direction: column; gap: 6px; }
 .asset-controls input[type="text"] { font-size: 12px; color: var(--color-muted); }

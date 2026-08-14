@@ -362,6 +362,16 @@ http.createServer((req, res) => {
     Promise.resolve(handleAuth(req, res, pathname)).catch((e) => sendJson(res, 500, { error: e.message }));
     return;
   }
+
+  // The template preview iframe loads a bundled template on this same
+  // origin, and that template's own JS fires an analytics/RUM beacon it
+  // doesn't wait on or care about the response to. Answering with a quiet
+  // 204 instead of a 401 (session-gated) avoids noisy console errors while
+  // previewing — matches the same exemption made in site-server.js.
+  if (pathname === '/api/analytics/collect' || pathname === '/cdn-cgi/rum') {
+    res.writeHead(204); res.end();
+    return;
+  }
   if (pathname === '/login' || pathname === '/login.html') {
     fs.readFile(path.join(root, 'admin-login.html'), (err, data) => {
       if (err) { res.writeHead(404); res.end('Not found'); return; }

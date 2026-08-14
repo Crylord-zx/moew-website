@@ -173,6 +173,26 @@ function titleFromSlug(slug) {
 }
 
 async function handleApi(req, res, pathname) {
+  // The bundled template app fires an analytics beacon on every page view
+  // (POST /api/analytics/collect) and, if a Cloudflare integration is
+  // present client-side, occasionally a stray GET here too. The real site
+  // answers both with an empty 204; matching that keeps the console clean
+  // instead of a harmless-but-noisy 404 on every single template load.
+  if (pathname === '/api/analytics/collect') {
+    res.writeHead(204); res.end();
+    return;
+  }
+
+  // GET /api/templates/:id/reviews -> a template page's own "can this
+  // visitor review it" widget calls this after hydration. The original
+  // site's real answer is always this same harmless shape for a fresh
+  // visitor; without it the widget's promise never resolves and the
+  // template's whole page crashes with a Next.js "Connection closed"
+  // error boundary.
+  if (req.method === 'GET' && /^\/api\/templates\/[^/]+\/reviews$/.test(pathname)) {
+    return sendJson(res, 200, { data: { canReview: false, existing: null } });
+  }
+
   // GET /api/public/templates -> gallery cards
   if (req.method === 'GET' && pathname === '/api/public/templates') {
     const list = listTemplateSlugs().map((slug) => ({ slug, title: titleFromSlug(slug) }));
@@ -341,6 +361,29 @@ try {
 const server = http.createServer((req, res) => {
   try {
     const pathname = decodeURIComponent(req.url.split('?')[0]);
+
+    // A bundled template's own client-side router prefetches its site's
+    // other nav links (home, login, products, ...) using Next.js's RSC
+    // fetch protocol (a "_rsc" query param). Every one of those paths is
+    // naturally 404 here except "/", which we do serve — but as our own
+    // unrelated gallery HTML, not a valid RSC payload. The template's
+    // flight-stream parser can't make sense of that and hard-crashes the
+    // whole page with a "Connection closed" error. Treating any "_rsc"
+    // request as not-found (matching what already happens for the other
+    // nav links) avoids that; real browser navigation never sends "_rsc".
+    if (pathname === '/' && req.url.includes('_rsc=')) {
+      res.writeHead(404); res.end('Not found');
+      return;
+    }
+
+    // Cloudflare's real-user-monitoring beacon, fired by the bundled
+    // template app's own Cloudflare integration. Harmless 404 locally
+    // (there's no Cloudflare here to receive it) but noisy; a quiet 204
+    // matches what a real edge deployment would answer.
+    if (pathname === '/cdn-cgi/rum') {
+      res.writeHead(204); res.end();
+      return;
+    }
 
     if (pathname.startsWith('/api/')) {
       handleApi(req, res, pathname).catch((e) => sendJson(res, 500, { error: e.message }));

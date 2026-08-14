@@ -24,6 +24,21 @@ const mailboxListEl = document.getElementById('mailboxList');
 const mailboxCountEl = document.getElementById('mailboxCount');
 const refreshMailboxBtn = document.getElementById('refreshMailboxBtn');
 
+// small click-ripple feedback on any .btn, including ones added later
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.btn');
+  if (!btn) return;
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  const ripple = document.createElement('span');
+  ripple.className = 'ripple';
+  ripple.style.width = ripple.style.height = size + 'px';
+  ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+  ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+  btn.appendChild(ripple);
+  ripple.addEventListener('animationend', () => ripple.remove());
+});
+
 function reloadPreview() {
   if (!currentSlug) return;
   // cache-bust so the iframe always shows the just-saved file, not a cached copy

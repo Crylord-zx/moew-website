@@ -15,15 +15,31 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: var(--color-text);
   background: var(--color-bg);
+  animation: pageFadeIn 0.4s ease both;
 }
 img { max-width: 100%; display: block; }
+
+@keyframes pageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
 /* generic fade-in used for gallery cards, loaded content, etc. */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.fade-in { animation: fadeInUp 0.35s ease both; }
+.fade-in { animation: fadeInUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* respect users who've asked for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 /* small spinner for loading states */
 .spinner {
@@ -34,20 +50,79 @@ img { max-width: 100%; display: block; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-row { display: flex; align-items: center; gap: 10px; color: var(--color-muted); padding: 12px 4px; }
 
-.btn:disabled, .btn[disabled] { opacity: 0.6; cursor: not-allowed; }
-.btn { transition: background 0.15s, transform 0.15s, opacity 0.15s; }
+.btn:disabled, .btn[disabled] { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+.btn {
+  transition: background 0.15s ease, transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.15s, box-shadow 0.15s;
+}
+.btn:hover:not(:disabled) { transform: translateY(-2px); }
+.btn:active:not(:disabled) { transform: translateY(0) scale(0.96); transition-duration: 0.08s; }
+.btn.primary:hover:not(:disabled) { box-shadow: 0 8px 20px rgba(124, 58, 237, 0.35); }
+
+.btn { position: relative; overflow: hidden; }
+.btn .ripple {
+  position: absolute; border-radius: 50%; transform: scale(0);
+  background: rgba(255,255,255,0.55); pointer-events: none;
+  animation: rippleOut 0.55s ease-out forwards;
+}
+.btn.secondary .ripple { background: rgba(124, 58, 237, 0.25); }
+@keyframes rippleOut {
+  to { transform: scale(2.6); opacity: 0; }
+}
 
 .hero {
+  position: relative;
   text-align: center;
   padding: 72px 20px 40px;
   background: radial-gradient(circle at top, rgba(124,58,237,0.10), transparent 60%);
+  animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  overflow: hidden;
 }
 .hero .eyebrow {
   text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px;
   font-weight: 700; color: var(--color-primary);
+  animation: fadeInUp 0.5s ease both;
 }
-.hero h1 { font-family: Georgia, serif; font-size: clamp(28px, 5vw, 42px); margin: 12px 0; }
-.hero .sub { color: var(--color-muted); max-width: 520px; margin: 0 auto; }
+.hero h1 {
+  font-family: Georgia, serif; font-size: clamp(28px, 5vw, 42px); margin: 12px 0;
+  animation: fadeInUp 0.55s ease 0.05s both;
+  background: linear-gradient(90deg, var(--color-primary-dark), var(--color-pink), var(--color-primary), var(--color-primary-dark));
+  background-size: 300% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: fadeInUp 0.55s ease 0.05s both, gradientShift 6s ease-in-out infinite;
+}
+.hero .sub {
+  color: var(--color-muted); max-width: 520px; margin: 0 auto;
+  animation: fadeInUp 0.55s ease 0.1s both;
+  position: relative;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* soft floating decorative hearts behind the hero copy */
+.hero-deco {
+  position: absolute; pointer-events: none; z-index: 0;
+  font-size: 22px; opacity: 0.35; color: var(--color-pink);
+  animation: heroFloat 6s ease-in-out infinite;
+}
+.hero-deco.d1 { top: 18%; left: 8%; animation-delay: 0s; font-size: 26px; }
+.hero-deco.d2 { top: 60%; left: 15%; animation-delay: 1.2s; font-size: 16px; color: var(--color-primary); }
+.hero-deco.d3 { top: 25%; right: 10%; animation-delay: 0.6s; font-size: 20px; }
+.hero-deco.d4 { top: 65%; right: 16%; animation-delay: 1.8s; font-size: 28px; color: var(--color-primary); }
+.hero-deco.d5 { top: 8%; left: 45%; animation-delay: 2.4s; font-size: 14px; }
+.hero > *:not(.hero-deco) { position: relative; z-index: 1; }
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.25; }
+  50% { transform: translateY(-16px) rotate(8deg); opacity: 0.5; }
+}
+
+@media (max-width: 600px) {
+  .hero-deco { display: none; }
+}
 
 .gallery-wrap { max-width: 1100px; margin: 0 auto; padding: 20px 24px 80px; }
 .gallery {
@@ -58,14 +133,33 @@ img { max-width: 100%; display: block; }
 .muted { color: var(--color-muted); }
 
 .card {
+  position: relative;
   background: #fff; border: 1px solid var(--color-border); border-radius: 18px;
-  overflow: hidden; text-decoration: none; color: inherit;
+  text-decoration: none; color: inherit;
   box-shadow: 0 8px 24px rgba(124, 58, 237, 0.08);
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, border-color 0.25s ease;
   display: block;
 }
-.card:hover { transform: translateY(-3px); box-shadow: 0 14px 32px rgba(124, 58, 237, 0.16); }
-.card .thumb { width: 100%; height: 200px; object-fit: cover; background: #f1ecfb; }
+.card:hover {
+  transform: translateY(-5px) scale(1.015);
+  box-shadow: 0 16px 36px rgba(124, 58, 237, 0.18), 0 0 0 3px rgba(124, 58, 237, 0.12);
+  border-color: var(--color-primary);
+  animation: cardGlowPulse 1.8s ease-in-out infinite;
+}
+@keyframes cardGlowPulse {
+  0%, 100% { box-shadow: 0 16px 36px rgba(124, 58, 237, 0.18), 0 0 0 3px rgba(124, 58, 237, 0.12); }
+  50% { box-shadow: 0 18px 40px rgba(236, 72, 153, 0.22), 0 0 0 4px rgba(236, 72, 153, 0.18); }
+}
+.card .thumb {
+  width: 100%; height: 200px; object-fit: cover; background: #f1ecfb;
+  transition: transform 0.4s ease;
+}
+.card:hover .thumb { transform: scale(1.05); }
+.card .thumb { will-change: transform; }
+.card { --thumb-clip: 18px 18px 0 0; }
+.card .thumb { border-radius: var(--thumb-clip); }
+.card h3 { transition: color 0.15s ease; }
+.card:hover h3 { color: var(--color-primary-dark); }
 .card .card-body { padding: 14px 16px; }
 .card h3 { margin: 0 0 10px; font-size: 15px; }
 .card p { margin: 0; font-size: 12px; color: var(--color-muted); line-height: 1.5; max-height: 3em; overflow: hidden; }
@@ -84,9 +178,11 @@ footer { text-align: center; padding: 30px; color: var(--color-muted); font-size
   padding: 7px 13px; font-size: 11px; font-weight: 700;
   color: var(--color-primary-dark); text-decoration: none;
   box-shadow: 0 6px 16px rgba(124, 58, 237, 0.18);
-  transition: transform 0.15s;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+  animation: fadeInUp 0.4s ease 0.2s both;
 }
-.ig-badge:hover { transform: translateY(-2px); }
+.ig-badge:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 10px 22px rgba(124, 58, 237, 0.26); }
+.ig-badge:active { transform: translateY(0) scale(0.97); }
 
 /* ===================== customize page ===================== */
 #customizeLayout { display: flex; min-height: 100vh; }
@@ -105,16 +201,27 @@ footer { text-align: center; padding: 30px; color: var(--color-muted); font-size
   width: 100%; border: 1px solid var(--color-border); border-radius: 10px;
   padding: 10px 12px; font-size: 14px; font-family: inherit; color: var(--color-text);
   background: #fbfaff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.field input[type="text"]:focus, .field textarea:focus {
+  outline: none; border-color: var(--color-primary); background: #fff;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
 }
 .field textarea { resize: vertical; min-height: 70px; }
 
-.section-card { background: #fbfaff; border: 1px solid var(--color-border); border-radius: 14px; margin-bottom: 10px; overflow: hidden; }
+.section-card {
+  background: #fbfaff; border: 1px solid var(--color-border); border-radius: 14px; margin-bottom: 10px; overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.section-card:hover { border-color: #d7c9f7; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.08); }
 .section-header {
   width: 100%; display: flex; align-items: center; justify-content: space-between;
   background: none; border: none; cursor: pointer; text-align: left;
   padding: 14px 18px; font-size: 13px; font-weight: 700; text-transform: capitalize;
   color: var(--color-primary-dark);
+  transition: background 0.15s ease;
 }
+.section-header:hover { background: rgba(124, 58, 237, 0.05); }
 .section-header .chevron { color: var(--color-muted); transition: transform 0.2s; font-size: 11px; }
 .section-card.collapsed .chevron { transform: rotate(-90deg); }
 .section-body {
@@ -159,11 +266,16 @@ footer { text-align: center; padding: 30px; color: var(--color-muted); font-size
   border-radius: 32px;
   background: #f2effa;
   box-shadow: 0 20px 50px rgba(124, 58, 237, 0.22);
-  transition: opacity 0.2s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  animation: fadeInUp 0.5s ease both;
 }
 #customizeFrame.loading {
   opacity: 0.35;
+  transform: scale(0.985);
 }
+
+.asset-preview { transition: transform 0.15s ease; }
+.asset-field:hover .asset-preview { transform: scale(1.06); }
 
 #createStatus { min-height: 20px; font-size: 13px; margin-top: 8px; }
 #createStatus.err { color: #dc2626; }
@@ -172,11 +284,26 @@ footer { text-align: center; padding: 30px; color: var(--color-muted); font-size
 #successOverlay {
   position: fixed; inset: 0; background: rgba(36, 28, 51, 0.55);
   display: flex; align-items: center; justify-content: center; z-index: 50;
+  animation: overlayFadeIn 0.25s ease both;
 }
 #successOverlay[hidden] { display: none; }
+@keyframes overlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cardPopIn {
+  from { opacity: 0; transform: scale(0.9) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
 #successCard {
   background: #fff; border-radius: 20px; padding: 32px; max-width: 420px; width: 90%;
   text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+  animation: cardPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.burst-heart {
+  position: absolute; top: 45%; z-index: 51; pointer-events: none;
+  color: var(--color-pink); animation: heartBurst 1s ease-out forwards;
+}
+@keyframes heartBurst {
+  0% { transform: translate(0, 0) rotate(0deg) scale(0.4); opacity: 1; }
+  100% { transform: translate(var(--dx), -160px) rotate(var(--rot)) scale(1); opacity: 0; }
 }
 #successCard h2 { margin: 6px 0; }
 #successCard p { color: var(--color-muted); font-size: 14px; }

@@ -238,6 +238,7 @@ createBtn.addEventListener('click', async () => {
     document.getElementById('qrImage').src =
       `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=${encodeURIComponent(fullUrl)}`;
     document.getElementById('successOverlay').hidden = false;
+    burstHearts();
     createStatusEl.textContent = '';
   } catch (e) {
     createStatusEl.textContent = 'Failed: ' + e.message;
@@ -254,6 +255,39 @@ document.getElementById('copyLinkBtn').addEventListener('click', () => {
 });
 document.getElementById('closeSuccessBtn').addEventListener('click', () => {
   location.href = '/';
+});
+
+// small heart-burst celebration when the shareable page is created
+function burstHearts() {
+  const overlay = document.getElementById('successOverlay');
+  const glyphs = ['♡', '✿', '💜', '💗'];
+  for (let i = 0; i < 14; i++) {
+    const el = document.createElement('span');
+    el.className = 'burst-heart';
+    el.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
+    el.style.left = (45 + Math.random() * 10) + '%';
+    el.style.setProperty('--dx', (Math.random() * 240 - 120) + 'px');
+    el.style.setProperty('--rot', (Math.random() * 360 - 180) + 'deg');
+    el.style.animationDelay = (Math.random() * 0.15) + 's';
+    el.style.fontSize = (14 + Math.random() * 14) + 'px';
+    overlay.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+  }
+}
+
+// small click-ripple feedback on any .btn
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.btn');
+  if (!btn) return;
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  const ripple = document.createElement('span');
+  ripple.className = 'ripple';
+  ripple.style.width = ripple.style.height = size + 'px';
+  ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+  ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+  btn.appendChild(ripple);
+  ripple.addEventListener('animationend', () => ripple.remove());
 });
 
 init();
