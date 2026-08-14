@@ -110,6 +110,17 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Shareable creation links (/g/<id>) must always resolve to the actual
+  // generated page, no matter who's viewing them or what mode their
+  // browser is in. Without this, an admin whose browser carries the
+  // admin-mode cookie would have every link in their own Mailbox 404 —
+  // admin-server.js has no route for "/g/<id>" at all, since that's a
+  // pretty-URL rewrite that only site-server.js knows how to handle.
+  if (/^\/g\/[A-Za-z0-9_-]+$/.test(pathname)) {
+    handleSiteRequest(req, res);
+    return;
+  }
+
   if (isAdminHost(req) || hasAdminModeCookie(req)) {
     handleAdminRequest(req, res);
   } else {

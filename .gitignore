@@ -1,6 +1,7 @@
 # user-generated content — never commit this, it's created at runtime
 site/generated/*.html
 site/uploads/**
+creations-log.json
 
 # local edit history for the admin panel
 admin-backups/
