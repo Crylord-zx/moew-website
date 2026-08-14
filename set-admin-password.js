@@ -21,9 +21,13 @@ if (password.length < 8) {
 
 const salt = crypto.randomBytes(16).toString('hex');
 const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+// signs session cookies (see admin-server.js) — lets login sessions be
+// verified without a server-side session store, so they survive process
+// restarts and work correctly even if the host runs multiple instances
+const sessionSecret = crypto.randomBytes(32).toString('hex');
 
 const authFile = path.join(__dirname, 'admin-auth.json');
-fs.writeFileSync(authFile, JSON.stringify({ username, salt, hash }, null, 2), 'utf8');
+fs.writeFileSync(authFile, JSON.stringify({ username, salt, hash, sessionSecret }, null, 2), 'utf8');
 
 console.log(`Saved credentials for "${username}" to admin-auth.json.`);
 console.log('Restart admin-server.js for this to take effect.');

@@ -28,12 +28,20 @@ const MAX_BACKUPS_PER_TEMPLATE = 30;
 
 // ----------------------------------------------------------
 // Authentication — username + password (set via set-admin-password.js,
-// stored as a salted hash, never plaintext), signed session cookies kept
-// in memory, and a simple rate limiter on login attempts.
+// stored as a salted hash, never plaintext), a simple rate limiter on
+// login attempts, and self-verifying signed session cookies.
+//
+// Sessions are NOT kept in server memory. A cookie holds
+// {exp} + an HMAC signature made with a secret stored in admin-auth.json;
+// any request can verify it standalone by recomputing the signature. This
+// matters on real hosting: an in-memory session Map only works if every
+// request lands on the exact same process, which isn't guaranteed on a
+// host that runs multiple instances or restarts the app — those would
+// silently log everyone out or reject a session created a moment ago on
+// a different instance. A signed cookie has no such requirement.
 // ----------------------------------------------------------
 const SESSION_COOKIE = 'admin_session';
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-const sessions = new Map(); // token -> expiresAt
 const loginAttempts = new Map(); // ip -> { count, windowStart }
 const MAX_ATTEMPTS = 8;
 const ATTEMPT_WINDOW_MS = 15 * 60 * 1000;
@@ -68,10 +76,31 @@ function recordFailedAttempt(ip) {
   loginAttempts.set(ip, entry);
 }
 
-function createSession() {
-  const token = crypto.randomBytes(32).toString('base64url');
-  sessions.set(token, Date.now() + SESSION_TTL_MS);
-  return token;
+function signToken(payload, secret) {
+  const payloadB64 = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const sig = crypto.createHmac('sha256', secret).update(payloadB64).digest('base64url');
+  return `${payloadB64}.${sig}`;
+}
+
+function verifyToken(token, secret) {
+  const parts = String(token).split('.');
+  if (parts.length !== 2) return null;
+  const [payloadB64, sig] = parts;
+  const expectedSig = crypto.createHmac('sha256', secret).update(payloadB64).digest('base64url');
+  const a = Buffer.from(sig);
+  const b = Buffer.from(expectedSig);
+  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return null;
+  try {
+    const payload = JSON.parse(Buffer.from(payloadB64, 'base64url').toString('utf8'));
+    if (!payload.exp || payload.exp < Date.now()) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+function createSession(secret) {
+  return signToken({ exp: Date.now() + SESSION_TTL_MS }, secret);
 }
 
 function parseCookies(req) {
@@ -88,16 +117,15 @@ function parseCookies(req) {
 function isAuthed(req) {
   const token = parseCookies(req)[SESSION_COOKIE];
   if (!token) return false;
-  const expiresAt = sessions.get(token);
-  if (!expiresAt || expiresAt < Date.now()) { sessions.delete(token); return false; }
-  return true;
+  const config = loadAuthConfig();
+  if (!config || !config.sessionSecret) return false;
+  return !!verifyToken(token, config.sessionSecret);
 }
 
-// periodically sweep expired sessions/attempt windows so these Maps don't
+// periodically sweep expired login-attempt windows so this Map doesn't
 // grow forever on a long-running process
 setInterval(() => {
   const now = Date.now();
-  for (const [token, expiresAt] of sessions) if (expiresAt < now) sessions.delete(token);
   for (const [ip, entry] of loginAttempts) if (now - entry.windowStart > ATTEMPT_WINDOW_MS) loginAttempts.delete(ip);
 }, 10 * 60 * 1000).unref();
 
@@ -331,6 +359,9 @@ async function handleAuth(req, res, pathname) {
 
     const config = loadAuthConfig();
     if (!config) return sendJson(res, 500, { error: 'no admin password set — run set-admin-password.js first' });
+    if (!config.sessionSecret) {
+      return sendJson(res, 500, { error: 'admin-auth.json is missing sessionSecret — re-run set-admin-password.js to regenerate it' });
+    }
 
     const { username, password } = await readJsonBody(req);
     const ok = username === config.username && password && verifyPassword(password, config.salt, config.hash);
@@ -339,14 +370,13 @@ async function handleAuth(req, res, pathname) {
       return sendJson(res, 401, { error: 'wrong username or password' });
     }
 
-    const token = createSession();
+    const token = createSession(config.sessionSecret);
     res.setHeader('Set-Cookie', `${SESSION_COOKIE}=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${SESSION_TTL_MS / 1000}`);
     return sendJson(res, 200, { ok: true });
   }
 
   if (req.method === 'POST' && pathname === '/api/auth/logout') {
-    const token = parseCookies(req)[SESSION_COOKIE];
-    if (token) sessions.delete(token);
+    // stateless tokens — nothing to invalidate server-side, just clear the cookie
     res.setHeader('Set-Cookie', `${SESSION_COOKIE}=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0`);
     return sendJson(res, 200, { ok: true });
   }
