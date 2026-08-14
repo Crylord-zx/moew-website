@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cutiepage Templates — Admin</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <div id="layout">
+    <aside id="sidebar">
+      <div id="sidebarHeader">
+        <h1>Templates</h1>
+        <button id="logoutBtn" type="button">Log out</button>
+      </div>
+      <button id="mailboxBtn" type="button">📬 Mailbox <span id="mailboxCount" class="count" hidden>0</span></button>
+      <ul id="templateList"><li class="muted">Loading…</li></ul>
+    </aside>
+
+    <main id="content">
+      <div id="empty" class="empty-state">
+        <p>Pick a template on the left to edit its text, images, and music.</p>
+      </div>
+
+      <div id="mailboxView" hidden>
+        <div id="editorHeader">
+          <h2>Mailbox</h2>
+          <div class="header-actions">
+            <button id="refreshMailboxBtn" class="btn secondary" type="button">↻ Refresh</button>
+          </div>
+        </div>
+        <p class="hint">Every shareable link anyone has generated on your public site, newest first.</p>
+        <div id="mailboxList"></div>
+      </div>
+      <div id="editor" hidden>
+        <div id="editorHeader">
+          <h2 id="editorTitle"></h2>
+          <div class="header-actions">
+            <a id="viewLiveLink" href="#" target="_blank" class="btn secondary">View live ↗</a>
+            <button id="historyBtn" class="btn secondary" type="button">History / Undo</button>
+            <button id="saveBtn" class="btn primary" type="button">Save changes</button>
+          </div>
+        </div>
+        <div id="saveStatus"></div>
+
+        <div id="historyPanel" hidden>
+          <div id="historyHeader">
+            <strong>Previous versions</strong>
+            <span class="muted">Restoring backs up the current version too, so this is always reversible.</span>
+          </div>
+          <ul id="historyList"></ul>
+        </div>
+
+        <div id="editorBody">
+          <div id="formPane">
+            <div id="sections"></div>
+          </div>
+
+          <div id="previewPane">
+            <div id="previewHeader">
+              <span>Live preview</span>
+              <button id="refreshPreviewBtn" class="btn secondary small" type="button">↻ Refresh</button>
+            </div>
+            <iframe id="previewFrame" title="Live preview"></iframe>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

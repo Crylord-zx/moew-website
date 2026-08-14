@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Customize — Little Pages</title>
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+  <div id="customizeLayout">
+    <aside id="customizeSidebar">
+      <a class="back" href="/">← all templates</a>
+      <h1 id="templateTitle">Loading…</h1>
+      <p class="hint">Fill in your own words and photos below, preview it, then create your private link.</p>
+      <div id="fields"><div class="loading-row"><span class="spinner"></span> Loading…</div></div>
+      <div id="createStatus"></div>
+      <button id="createBtn" class="btn primary" type="button">Create my page →</button>
+    </aside>
+
+    <div id="customizePreviewPane">
+      <div id="previewHeaderBar">
+        <span>Preview</span>
+        <button id="refreshPreviewBtn" class="btn secondary" type="button">↻ Refresh preview</button>
+      </div>
+      <iframe id="customizeFrame" title="Preview"></iframe>
+    </div>
+  </div>
+
+  <div id="successOverlay" hidden>
+    <div id="successCard">
+      <p style="font-size:32px;margin:0">💌</p>
+      <h2>Your page is ready!</h2>
+      <p>Share this link with them — anyone with it can open your page.</p>
+
+      <div id="qrFrame">
+        <span class="qr-deco tl">✿</span>
+        <span class="qr-deco tr">♡</span>
+        <span class="qr-deco bl">♡</span>
+        <span class="qr-deco br">✿</span>
+        <img id="qrImage" alt="QR code for your page" />
+      </div>
+
+      <div id="shareLinkRow">
+        <input id="shareLinkInput" type="text" readonly />
+        <button id="copyLinkBtn" class="btn secondary" type="button">Copy</button>
+      </div>
+      <div class="success-actions">
+        <a id="openLinkBtn" class="btn primary" href="#" target="_blank">Open it ↗</a>
+        <button id="closeSuccessBtn" class="btn secondary" type="button">Make another</button>
+      </div>
+
+      <a id="igCredit" href="https://instagram.com/anshxr.yn" target="_blank" rel="noopener">made with ♡ by @anshxr.yn</a>
+    </div>
+  </div>
+
+  <a class="ig-badge" href="https://instagram.com/anshxr.yn" target="_blank" rel="noopener">✿ @anshxr.yn</a>
+
+  <script src="customize.js"></script>
+</body>
+</html>

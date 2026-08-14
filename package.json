@@ -1,0 +1,14 @@
+{
+  "name": "little-pages",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Public template gallery + customizer (site-server.js) and a local-only admin panel (admin-server.js) for editing master templates.",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node site-server.js",
+    "admin": "node admin-server.js"
+  },
+  "dependencies": {}
+}

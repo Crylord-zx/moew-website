@@ -1,0 +1,256 @@
+:root {
+  --color-primary: #7c3aed;
+  --color-primary-dark: #5b21b6;
+  --color-pink: #ec4899;
+  --color-bg: #fbf8ff;
+  --color-border: #e6ddfa;
+  --color-text: #241c33;
+  --color-muted: #7a7188;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+img { max-width: 100%; display: block; }
+
+/* generic fade-in used for gallery cards, loaded content, etc. */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeInUp 0.35s ease both; }
+
+/* small spinner for loading states */
+.spinner {
+  display: inline-block; width: 18px; height: 18px;
+  border: 2.5px solid var(--color-border); border-top-color: var(--color-primary);
+  border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-row { display: flex; align-items: center; gap: 10px; color: var(--color-muted); padding: 12px 4px; }
+
+.btn:disabled, .btn[disabled] { opacity: 0.6; cursor: not-allowed; }
+.btn { transition: background 0.15s, transform 0.15s, opacity 0.15s; }
+
+.hero {
+  text-align: center;
+  padding: 72px 20px 40px;
+  background: radial-gradient(circle at top, rgba(124,58,237,0.10), transparent 60%);
+}
+.hero .eyebrow {
+  text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px;
+  font-weight: 700; color: var(--color-primary);
+}
+.hero h1 { font-family: Georgia, serif; font-size: clamp(28px, 5vw, 42px); margin: 12px 0; }
+.hero .sub { color: var(--color-muted); max-width: 520px; margin: 0 auto; }
+
+.gallery-wrap { max-width: 1100px; margin: 0 auto; padding: 20px 24px 80px; }
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+.muted { color: var(--color-muted); }
+
+.card {
+  background: #fff; border: 1px solid var(--color-border); border-radius: 18px;
+  overflow: hidden; text-decoration: none; color: inherit;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.08);
+  transition: transform 0.15s, box-shadow 0.15s;
+  display: block;
+}
+.card:hover { transform: translateY(-3px); box-shadow: 0 14px 32px rgba(124, 58, 237, 0.16); }
+.card .thumb { width: 100%; height: 200px; object-fit: cover; background: #f1ecfb; }
+.card .card-body { padding: 14px 16px; }
+.card h3 { margin: 0 0 10px; font-size: 15px; }
+.card p { margin: 0; font-size: 12px; color: var(--color-muted); line-height: 1.5; max-height: 3em; overflow: hidden; }
+.card-actions { display: flex; gap: 8px; }
+.card-actions .btn { flex: 1; }
+.btn.small { padding: 8px 10px; font-size: 12px; }
+
+footer { text-align: center; padding: 30px; color: var(--color-muted); font-size: 13px; }
+
+/* small floating Instagram credit, shown on every page of the site */
+.ig-badge {
+  position: fixed; bottom: 14px; right: 14px; z-index: 40;
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(4px);
+  border: 1px solid var(--color-border); border-radius: 999px;
+  padding: 7px 13px; font-size: 11px; font-weight: 700;
+  color: var(--color-primary-dark); text-decoration: none;
+  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.18);
+  transition: transform 0.15s;
+}
+.ig-badge:hover { transform: translateY(-2px); }
+
+/* ===================== customize page ===================== */
+#customizeLayout { display: flex; min-height: 100vh; }
+#customizeSidebar {
+  width: 420px; flex-shrink: 0; padding: 28px; overflow-y: auto;
+  background: #fff; border-right: 1px solid var(--color-border);
+}
+#customizeSidebar .back { font-size: 13px; color: var(--color-muted); text-decoration: none; }
+#customizeSidebar h1 { font-size: 22px; margin: 10px 0 4px; }
+#customizeSidebar .hint { color: var(--color-muted); font-size: 13px; margin-bottom: 20px; }
+
+.field { margin-bottom: 16px; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; font-size: 12px; font-weight: 600; color: var(--color-muted); margin-bottom: 6px; }
+.field input[type="text"], .field textarea {
+  width: 100%; border: 1px solid var(--color-border); border-radius: 10px;
+  padding: 10px 12px; font-size: 14px; font-family: inherit; color: var(--color-text);
+  background: #fbfaff;
+}
+.field textarea { resize: vertical; min-height: 70px; }
+
+.section-card { background: #fbfaff; border: 1px solid var(--color-border); border-radius: 14px; margin-bottom: 10px; overflow: hidden; }
+.section-header {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  background: none; border: none; cursor: pointer; text-align: left;
+  padding: 14px 18px; font-size: 13px; font-weight: 700; text-transform: capitalize;
+  color: var(--color-primary-dark);
+}
+.section-header .chevron { color: var(--color-muted); transition: transform 0.2s; font-size: 11px; }
+.section-card.collapsed .chevron { transform: rotate(-90deg); }
+.section-body {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.25s ease, opacity 0.2s ease;
+  opacity: 1;
+}
+.section-body > .inner { overflow: hidden; padding: 0 18px 16px; min-height: 0; }
+.section-card.collapsed .section-body { grid-template-rows: 0fr; opacity: 0; }
+
+.asset-field { display: flex; align-items: center; gap: 10px; }
+.asset-preview { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; background: #efe9fb; flex-shrink: 0; border: 1px solid var(--color-border); }
+.asset-preview.audio { display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.asset-controls { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.asset-controls input[type="file"] { font-size: 12px; }
+.upload-status { font-size: 11px; }
+.upload-status.ok { color: #16a34a; }
+.upload-status.err { color: #dc2626; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: none; border-radius: 999px; padding: 12px 22px; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; }
+.btn.primary { background: var(--color-primary); color: #fff; width: 100%; margin-top: 10px; }
+.btn.primary:hover { background: var(--color-primary-dark); }
+.btn.secondary { background: #fff; color: var(--color-primary-dark); border: 1px solid var(--color-border); }
+
+#customizePreviewPane {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  padding: 28px; background: #f4f1fb; overflow-y: auto;
+}
+#previewHeaderBar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; width: 100%; max-width: 360px; }
+#previewHeaderBar span { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-muted); font-weight: 700; }
+
+/* small "phone" mockup instead of a full-page-height iframe — width
+   never exceeds the pane's own content box, so it can't overflow on any
+   screen no matter how narrow */
+#customizeFrame {
+  flex: none;
+  width: min(360px, 100%);
+  height: 700px;
+  max-height: 78vh;
+  border: 6px solid #fff;
+  border-radius: 32px;
+  background: #f2effa;
+  box-shadow: 0 20px 50px rgba(124, 58, 237, 0.22);
+  transition: opacity 0.2s ease;
+}
+#customizeFrame.loading {
+  opacity: 0.35;
+}
+
+#createStatus { min-height: 20px; font-size: 13px; margin-top: 8px; }
+#createStatus.err { color: #dc2626; }
+
+/* success overlay */
+#successOverlay {
+  position: fixed; inset: 0; background: rgba(36, 28, 51, 0.55);
+  display: flex; align-items: center; justify-content: center; z-index: 50;
+}
+#successOverlay[hidden] { display: none; }
+#successCard {
+  background: #fff; border-radius: 20px; padding: 32px; max-width: 420px; width: 90%;
+  text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+}
+#successCard h2 { margin: 6px 0; }
+#successCard p { color: var(--color-muted); font-size: 14px; }
+#shareLinkRow { display: flex; gap: 8px; margin: 18px 0; }
+#shareLinkRow input { flex: 1; border: 1px solid var(--color-border); border-radius: 10px; padding: 10px; font-size: 13px; }
+.success-actions { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
+
+/* animated, decorated QR code frame */
+#qrFrame {
+  position: relative;
+  width: 176px; height: 176px;
+  margin: 20px auto 4px;
+  padding: 12px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #fff, #f7f1ff);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  box-shadow: 0 0 0 3px var(--color-primary), 0 10px 26px rgba(124, 58, 237, 0.3);
+  animation: qrGlow 2.2s ease-in-out infinite;
+}
+#qrImage { width: 100%; height: 100%; border-radius: 12px; display: block; }
+.qr-deco { position: absolute; font-size: 18px; color: var(--color-pink); animation: qrFloat 2.6s ease-in-out infinite; }
+.qr-deco.tl { top: -10px; left: -10px; }
+.qr-deco.tr { top: -10px; right: -10px; animation-delay: 0.3s; }
+.qr-deco.bl { bottom: -10px; left: -10px; animation-delay: 0.6s; color: var(--color-primary); }
+.qr-deco.br { bottom: -10px; right: -10px; animation-delay: 0.9s; color: var(--color-primary); }
+
+@keyframes qrGlow {
+  0%, 100% { box-shadow: 0 0 0 3px var(--color-primary), 0 10px 26px rgba(124, 58, 237, 0.3); }
+  50% { box-shadow: 0 0 0 5px var(--color-pink), 0 14px 34px rgba(236, 72, 153, 0.4); }
+}
+@keyframes qrFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-4px) scale(1.15); }
+}
+
+#igCredit {
+  display: inline-block; margin-top: 18px; font-size: 12px;
+  color: var(--color-muted); text-decoration: none;
+}
+#igCredit:hover { color: var(--color-primary-dark); text-decoration: underline; }
+
+@media (max-width: 900px) {
+  #customizeLayout { flex-direction: column; }
+  #customizeSidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--color-border); }
+  #customizeFrame { min-height: 520px; }
+}
+
+@media (max-width: 600px) {
+  .hero { padding: 44px 18px 28px; }
+  .hero .sub { font-size: 14px; }
+
+  .gallery-wrap { padding: 16px 16px 90px; }
+  .gallery { gap: 14px; grid-template-columns: 1fr 1fr; }
+  .card .thumb { height: 130px; }
+  .card .card-body { padding: 10px 12px; }
+  .card h3 { font-size: 13px; margin-bottom: 8px; }
+  .card-actions { flex-direction: column; gap: 6px; }
+  .btn.small { padding: 9px 10px; }
+
+  #customizeSidebar { padding: 18px 16px; }
+  #customizePreviewPane { padding: 18px 16px 90px; }
+  #customizeSidebar h1 { font-size: 19px; }
+
+  #successCard { padding: 24px 20px; }
+  #shareLinkRow { flex-direction: column; }
+  #shareLinkRow input { width: 100%; }
+  .success-actions { flex-direction: column; }
+
+  /* keep the floating badge out of the way of thumbs/buttons on phones,
+     and respect the home-indicator safe area on notched iPhones */
+  .ig-badge {
+    padding: 6px 11px; font-size: 10px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    right: 10px;
+  }
+}

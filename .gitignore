@@ -1,0 +1,16 @@
+# user-generated content — never commit this, it's created at runtime
+site/generated/*.html
+site/uploads/**
+
+# local edit history for the admin panel
+admin-backups/
+
+# admin login credentials (salted hash, but still — never commit this)
+admin-auth.json
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+
+# stray local editor file
+*.code-workspace
