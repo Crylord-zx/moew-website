@@ -61,9 +61,10 @@ async function init() {
 // plain text+photo content — hidden entirely from the customize form, not
 // just their individual gif/music fields. Their default content is left
 // as-is in the final page; visitors just can't touch it. "theme" is the
-// template's color/style pick — that's a design decision, not something
-// a gift recipient's customizer should be able to change.
-const LOCKED_SECTION_PATTERN = /playlist|game|theme/i;
+// template's color/style pick, and "song"/"song-card" are the music
+// player — neither is something a gift recipient's customizer should be
+// able to touch, admin-only.
+const LOCKED_SECTION_PATTERN = /playlist|game|theme|song/i;
 
 function renderFields() {
   fieldsEl.innerHTML = '';
