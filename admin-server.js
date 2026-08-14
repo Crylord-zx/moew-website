@@ -441,7 +441,7 @@ function handleAdminRequest(req, res) {
   });
 }
 
-module.exports = { handleAdminRequest, loadAuthConfig };
+module.exports = { handleAdminRequest, loadAuthConfig, signToken, verifyToken };
 
 // Only actually start listening when run directly (`node admin-server.js`).
 // When required by server.js (the merged single-deployment entry point),

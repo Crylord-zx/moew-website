@@ -33,6 +33,19 @@ same deployment. Optionally set `ADMIN_HOST=admin.yourdomain.com` as an
 env var if you want an exact match instead of the "starts with `admin.`"
 default.
 
+**No subdomain, or don't want the admin panel reachable at an obvious
+`admin.` address at all?** Set an `ADMIN_UNLOCK_PATH` environment
+variable to a secret path only you know, e.g.
+`ADMIN_UNLOCK_PATH=/enter-something-only-you-would-type` — **pick your
+own value in your host's environment variable settings, never hardcode
+it in code or commit it**. Visiting that exact path once sets a
+long-lived cookie flagging your browser as admin; from then on your
+browser sees the admin panel at the normal `/` and every other path on
+your main domain, while everyone else keeps seeing the public site at
+those same paths. Your real username/password login still fully gates
+actual access underneath this — the cookie only decides which app
+renders for you, it's not itself a way in.
+
 ### Option B — two separate processes, `site-server.js` + `admin-server.js`
 
 Better for a VPS where you're already running things as genuinely separate
