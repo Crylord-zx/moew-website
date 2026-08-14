@@ -144,24 +144,41 @@ function renderSections() {
   sectionsEl.innerHTML = '';
   currentSnapshot.sections.forEach((section, sIdx) => {
     const card = document.createElement('div');
-    card.className = 'section-card';
+    // collapsed by default — with a dozen-plus sections per template, an
+    // all-expanded list was a very long scroll to get anywhere. First
+    // section is opened below so the panel isn't empty-looking on load.
+    card.className = 'section-card collapsed';
 
-    const h3 = document.createElement('h3');
-    h3.textContent = section.id;
-    card.appendChild(h3);
+    const header = document.createElement('button');
+    header.type = 'button';
+    header.className = 'section-header';
+    header.innerHTML = `
+      <span class="titles">
+        <h3>${escapeHtml(section.id)}</h3>
+        <span class="kind">${escapeHtml(section.kind || '')}</span>
+      </span>
+      <span class="chevron">▾</span>
+    `;
+    header.addEventListener('click', () => card.classList.toggle('collapsed'));
+    card.appendChild(header);
 
-    const kind = document.createElement('p');
-    kind.className = 'kind';
-    kind.textContent = section.kind || '';
-    card.appendChild(kind);
+    const body = document.createElement('div');
+    body.className = 'section-body';
+    const inner = document.createElement('div');
+    inner.className = 'inner';
+    body.appendChild(inner);
 
     Object.keys(section.values || {}).forEach((key) => {
       const value = section.values[key];
-      card.appendChild(renderField(sIdx, key, value));
+      inner.appendChild(renderField(sIdx, key, value));
     });
 
+    card.appendChild(body);
     sectionsEl.appendChild(card);
   });
+
+  const first = sectionsEl.querySelector('.section-card');
+  if (first) first.classList.remove('collapsed');
 }
 
 function renderField(sIdx, key, value) {
