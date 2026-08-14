@@ -376,8 +376,18 @@ async function handleAuth(req, res, pathname) {
   }
 
   if (req.method === 'POST' && pathname === '/api/auth/logout') {
-    // stateless tokens — nothing to invalidate server-side, just clear the cookie
-    res.setHeader('Set-Cookie', `${SESSION_COOKIE}=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0`);
+    // stateless tokens — nothing to invalidate server-side, just clear the
+    // cookie. Also clear "admin_mode" (the hidden-path entry flag from
+    // server.js) here, not just the login session — otherwise a full
+    // logout still leaves the browser permanently routed to the admin
+    // panel on every path, with no way back to the public site short of
+    // manually clearing cookies. Harmless to set even when running
+    // standalone (admin-server.js on its own has no such cookie to begin
+    // with, so this is a no-op there).
+    res.setHeader('Set-Cookie', [
+      `${SESSION_COOKIE}=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0`,
+      `admin_mode=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0`,
+    ]);
     return sendJson(res, 200, { ok: true });
   }
 

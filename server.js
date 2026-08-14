@@ -96,6 +96,20 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Once a browser has the admin-mode cookie, every path on this domain
+  // routes to the admin panel — including "/", so there was previously no
+  // way back to see the public site in that same browser without manually
+  // clearing cookies. This path clears just that one cookie (your actual
+  // login session, if any, is untouched) and sends you back to "/", which
+  // now resolves to the public site again. Doesn't need to be secret —
+  // it only ever *leaves* admin mode, never grants it.
+  if (pathname === '/exit-admin-mode') {
+    res.setHeader('Set-Cookie', `${ADMIN_MODE_COOKIE}=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0`);
+    res.writeHead(302, { Location: '/' });
+    res.end();
+    return;
+  }
+
   if (isAdminHost(req) || hasAdminModeCookie(req)) {
     handleAdminRequest(req, res);
   } else {
