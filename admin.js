@@ -4,6 +4,15 @@
 // ==========================================================
 let currentSlug = null;
 let currentSnapshot = null;
+// The 27 lovearea templates have no templates/*.html file or "sections"
+// snapshot — their editable content is a plain data object instead (see
+// lovearea-form.js, shared with the public customize page). This flag is
+// how every shared control (save button, preview refresh, history) knows
+// which mode it's currently in.
+let currentIsLovearea = false;
+let loveForm = null;
+let loveCategoryDesign = null; // { category, design }
+const lovePreviewId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
 
 const templateListEl = document.getElementById('templateList');
 const emptyEl = document.getElementById('empty');
@@ -39,8 +48,22 @@ document.addEventListener('click', (e) => {
   ripple.addEventListener('animationend', () => ripple.remove());
 });
 
-function reloadPreview() {
+async function reloadPreview() {
   if (!currentSlug) return;
+  if (currentIsLovearea) {
+    if (!loveForm || !loveForm.getData()) return;
+    try {
+      const res = await fetch('/api/public/lovearea/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug: currentSlug, data: loveForm.getData(), previewId: lovePreviewId }),
+      });
+      const out = await res.json();
+      if (!res.ok) { console.error('preview failed:', out.error); return; }
+      previewFrame.src = out.url + '&t=' + Date.now();
+    } catch (e) { /* preview is best-effort — a failed refresh isn't fatal */ }
+    return;
+  }
   // cache-bust so the iframe always shows the just-saved file, not a cached copy
   previewFrame.src = `/templates/${currentSlug}.html?t=${Date.now()}`;
 }
@@ -74,8 +97,8 @@ async function loadTemplateList() {
       const btn = document.createElement('button');
       if (!enabled) btn.classList.add('disabled-template');
       // lovearea templates have no template file to edit here — their
-      // master copy is a saved data snapshot instead (see
-      // customize-love.html's admin=1 mode), so the subtitle reflects
+      // master copy is a saved data snapshot instead, edited inline in
+      // this same panel (selectLoveTemplate), so the subtitle reflects
       // whether one's been saved yet rather than always showing "no
       // master copy" regardless of actual state.
       const loveSubtitle = hasMaster ? 'master copy set — click to edit' : 'no master copy yet — click to set one';
@@ -85,7 +108,7 @@ async function loadTemplateList() {
         <span class="label">${escapeHtml(title)}<span class="slug">${isLovearea ? loveSubtitle : escapeHtml(slug) + '.html'}</span></span>
       `;
       if (isLovearea) {
-        btn.addEventListener('click', () => window.open(`/site/customize-love.html?slug=${encodeURIComponent(slug)}&admin=1`, '_blank'));
+        btn.addEventListener('click', () => selectLoveTemplate(slug, btn));
       } else {
         btn.addEventListener('click', () => selectTemplate(slug, btn));
       }
@@ -136,6 +159,7 @@ async function selectTemplate(slug, btnEl) {
     return;
   }
   currentSlug = slug;
+  currentIsLovearea = false;
   currentSnapshot = await res.json();
 
   mailboxViewEl.hidden = true;
@@ -143,11 +167,46 @@ async function selectTemplate(slug, btnEl) {
   editorEl.hidden = false;
   saveStatusEl.textContent = '';
   historyPanel.hidden = true;
+  historyBtn.hidden = false;
+  saveBtn.textContent = 'Save changes';
   editorTitleEl.textContent = (currentSnapshot.seo && currentSnapshot.seo.title) || slug;
   viewLiveLink.href = `/templates/${slug}.html`;
   reloadPreview();
 
   renderSections();
+}
+
+// lovearea templates have no snapshot/backup system — their master copy
+// is a plain data object (see lovearea-form.js), reusing the exact same
+// editor panel, save button, and preview pane as the snapshot editor
+// above, just pointed at a different set of endpoints.
+async function selectLoveTemplate(slug, btnEl) {
+  document.querySelectorAll('#templateList button').forEach((b) => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+
+  const res = await fetch(`/api/public/lovearea-schema/${encodeURIComponent(slug)}`);
+  const out = await res.json();
+  if (!res.ok) {
+    alert('Could not load this template: ' + out.error);
+    return;
+  }
+  currentSlug = slug;
+  currentIsLovearea = true;
+  loveCategoryDesign = { category: out.category, design: out.design };
+
+  mailboxViewEl.hidden = true;
+  emptyEl.hidden = true;
+  editorEl.hidden = false;
+  saveStatusEl.textContent = '';
+  historyPanel.hidden = true;
+  historyBtn.hidden = true; // no backup/undo system for these yet
+  saveBtn.textContent = 'Save as master copy';
+  editorTitleEl.textContent = slug.replace(/^love-/, '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  viewLiveLink.href = `/template/${out.category}/${out.design}?preview=true`;
+
+  if (!loveForm) loveForm = createLoveAreaForm(sectionsEl);
+  loveForm.setData(JSON.parse(JSON.stringify(out.sample)));
+  reloadPreview();
 }
 
 function renderSections() {
@@ -370,6 +429,21 @@ saveBtn.addEventListener('click', async () => {
   saveStatusEl.textContent = 'Saving…';
   saveStatusEl.className = '';
   try {
+    if (currentIsLovearea) {
+      const res = await fetch(`/api/lovearea/${encodeURIComponent(currentSlug)}/master`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: loveForm.getData() }),
+      });
+      const out = await res.json();
+      if (!res.ok) throw new Error(out.error);
+      saveStatusEl.textContent = 'Saved as master copy ✓';
+      saveStatusEl.className = 'ok';
+      reloadPreview();
+      loadTemplateList(); // refresh the "master copy set" subtitle
+      return;
+    }
+
     const res = await fetch(`/api/templates/${currentSlug}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

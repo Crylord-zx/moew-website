@@ -123,6 +123,11 @@ body {
   padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none;
   transition: background 0.15s ease, transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
 }
+/* author CSS beats the browser's own [hidden]{display:none} at equal
+   specificity — without this, setting el.hidden=true on a .btn-classed
+   element (e.g. hiding History/Undo for lovearea templates) silently
+   does nothing and the button stays visible */
+.btn[hidden] { display: none; }
 .btn .ripple {
   position: absolute; border-radius: 50%; transform: scale(0);
   background: rgba(255,255,255,0.55); pointer-events: none;
@@ -249,9 +254,26 @@ body {
 }
 .asset-field:hover .asset-preview { transform: scale(1.06); }
 .asset-preview.audio { display: flex; align-items: center; justify-content: center; font-size: 20px; }
+div.asset-preview { display: flex; align-items: center; justify-content: center; font-size: 20px; opacity: 0.5; }
 .asset-controls { flex: 1; display: flex; flex-direction: column; gap: 6px; }
 .asset-controls input[type="text"] { font-size: 12px; color: var(--color-muted); }
 .asset-controls input[type="file"] { font-size: 12px; }
 .upload-status { font-size: 12px; }
 .upload-status.ok { color: #16a34a; }
 .upload-status.err { color: #dc2626; }
+
+/* used by the lovearea master-copy form (shared with the public
+   customize page) — the classic snapshot editor never has arrays or
+   checkboxes, so these weren't needed until now */
+.field input[type="number"] {
+  width: 100%; border: 1px solid var(--color-border); border-radius: 10px;
+  padding: 10px 12px; font-size: 14px; font-family: inherit; color: var(--color-text);
+  background: #fbfaff;
+}
+.checkbox-field { display: flex; align-items: center; gap: 8px; }
+.checkbox-field input { width: auto; }
+.array-item { border: 1px dashed var(--color-border); border-radius: 12px; padding: 12px; margin-bottom: 10px; position: relative; }
+.array-item .remove-item { position: absolute; top: 8px; right: 8px; background: none; border: none; color: var(--color-muted); cursor: pointer; font-size: 13px; }
+.array-item .remove-item:hover { color: #dc2626; }
+.add-item-btn { background: #fbfaff; border: 1px dashed var(--color-border); border-radius: 10px; padding: 8px; width: 100%; font-size: 12px; font-weight: 700; color: var(--color-primary-dark); cursor: pointer; }
+.add-item-btn:hover { background: #f1ecfb; }
