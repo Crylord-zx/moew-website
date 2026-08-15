@@ -294,6 +294,15 @@ async function handleApi(req, res, pathname) {
   // GET /api/templates/:slug -> full snapshot
   const getMatch = pathname.match(/^\/api\/templates\/([^/]+)$/);
   if (req.method === 'GET' && getMatch) {
+    // A lovearea slug has no templates/*.html file to read — this branch
+    // only exists so a stale/cached older admin.js hitting this endpoint
+    // for one fails with a clear, expected error instead of a raw ENOENT
+    // stack trace. The current admin.js never calls this endpoint for a
+    // lovearea slug in the first place (it opens customize-love.html
+    // instead), so this is a defensive backstop, not the normal path.
+    if (LOVEAREA_SCHEMAS[getMatch[1]]) {
+      return sendJson(res, 400, { error: 'This template has no editable snapshot here — use its "customize" link from the template list instead.' });
+    }
     try {
       const html = fs.readFileSync(templateFile(getMatch[1]), 'utf8');
       const snap = extractSnapshot(html);
@@ -306,6 +315,9 @@ async function handleApi(req, res, pathname) {
   // POST /api/templates/:slug -> save edited snapshot (auto-backs up the
   // pre-save version first, so every save can be undone)
   if (req.method === 'POST' && getMatch) {
+    if (LOVEAREA_SCHEMAS[getMatch[1]]) {
+      return sendJson(res, 400, { error: 'This template has no editable snapshot here — use its "customize" link from the template list instead.' });
+    }
     try {
       const slug = getMatch[1];
       const body = await readJsonBody(req);
