@@ -417,6 +417,10 @@ footer { text-align: center; padding: 30px; color: var(--color-muted); font-size
 .icon-btn:hover { box-shadow: 0 6px 16px rgba(124, 58, 237, 0.12); transform: translateY(-1px); }
 .icon-btn:active { transform: translateY(0) scale(0.97); }
 .icon-btn svg { width: 26px; height: 26px; }
+/* Chrome's own logo doesn't fill a square bounding box as evenly as
+   Safari's plain circle does — it reads visually smaller/off-center
+   next to it at the same size, so it gets a touch more room to match. */
+.icon-btn svg.icon-chrome { width: 29px; height: 29px; }
 .icon-btn span { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-muted); }
 
 .icon-btn-row {

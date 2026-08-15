@@ -525,8 +525,8 @@
         }
       ],
       "evolution": {
-        "pixelatedPhotoUrl": "https://images.unsplash.com/photo-1544253303-34e8e19e0ee2?q=80&w=1928&auto=format&fit=crop",
-        "hdPhotoUrl": "https://images.unsplash.com/photo-1544253303-34e8e19e0ee2?q=80&w=1928&auto=format&fit=crop"
+        "pixelatedPhotoUrl": "/assets/baby-CAz3uylb.webp",
+        "hdPhotoUrl": "/assets/cutie-BePSf0To.webp"
       },
       "dialogue": {
         "initialRoast": "Happy Birthday! Another year older, wiser... and somehow still just as annoying. Achievement unlocked: Birthday Legend.",
@@ -964,7 +964,7 @@
       "letterTitle": "A Special Message",
       "letterContent": "From the moment we met, my life changed in the most beautiful way. Every laugh we share, every memory we build, it all means the world to me. You are my sunshine and my home. Will you stay by my side forever?",
       "photoFrameText": "Forever Together",
-      "userPhoto": "https://images.unsplash.com/photo-1518199266791-5374a22e9687?w=800",
+      "userPhoto": "/assets/couple-StM4Q3I0.webp",
       "proposalQuestion": "Will you be my Valentine? 💗",
       "successText": "Awww I knew you couldn’t say no 😭💖 You’re my happiness"
     }
@@ -1444,7 +1444,7 @@
     "sample": {
       "music": {
         "enabled": true,
-        "url": "https://assets.mixkit.co/music/preview/mixkit-celebration-spirit-84.mp3",
+        "url": "/balam_pichkari.mp3",
         "volume": 0.5
       },
       "scenes": {
