@@ -109,6 +109,16 @@
        a MutationObserver keeping them hidden through this app's own
        client-side re-renders, the same self-healing approach already
        used for this site's Instagram credit badge. */
+
+    /* Several templates' root section is a fixed h-screen (exactly
+       100vh) that clips its own content, but on real phones the actual
+       content is often taller than that — the overflow spills past the
+       container and exposes the raw <body> background underneath, which
+       is this app's own site-wide theme color (a pale blue), completely
+       unrelated to whichever template is showing. Neutral white blends
+       into every template's own pastel background far better than that
+       mismatched blue block does. */
+    body { background: #fff !important; }
   </style>
 </head>
 

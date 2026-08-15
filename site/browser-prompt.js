@@ -5,8 +5,14 @@
 // run on every one of its own pages, now scoped to just this one place.
 (function () {
   var ua = navigator.userAgent || navigator.vendor || window.opera || '';
-  var isInAppBrowser = ua.indexOf('Instagram') > -1 || ua.indexOf('FBAN') > -1 || ua.indexOf('FBAV') > -1 || ua.indexOf('Messenger') > -1;
-  if (!isInAppBrowser) return;
+  var uaMatch = ua.indexOf('Instagram') > -1 || ua.indexOf('FBAN') > -1 || ua.indexOf('FBAV') > -1 || ua.indexOf('Messenger') > -1;
+  // Android's Instagram opens links in a Chrome Custom Tab, which reports
+  // a completely ordinary Chrome user-agent with no Instagram marker at
+  // all — there's no reliable client-side way to detect that case. The
+  // referrer is the only extra signal available: Instagram often (not
+  // always) passes itself as the referrer when launching the tab.
+  var referrerMatch = /instagram\.com|facebook\.com|fb\.com/i.test(document.referrer || '');
+  if (!uaMatch && !referrerMatch) return;
 
   var overlay = document.getElementById('browserPromptOverlay');
   if (!overlay) return;
