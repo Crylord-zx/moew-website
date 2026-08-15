@@ -29,6 +29,8 @@ const templatesDir = path.join(root, 'templates');
 const siteDir = path.join(root, 'site');
 const generatedDir = path.join(siteDir, 'generated');
 const uploadsDir = path.join(siteDir, 'uploads');
+const loveCreationsDir = path.join(siteDir, 'lovearea-creations');
+const LOVEAREA_SCHEMAS = JSON.parse(fs.readFileSync(path.join(root, 'lovearea-schemas.json'), 'utf8'));
 const port = process.env.PORT || 8800;
 const host = process.env.HOST || undefined; // undefined = all interfaces
 
@@ -80,6 +82,11 @@ function cacheControlFor(urlPath, ext) {
   if (urlPath.startsWith('/_next/static/') || urlPath.startsWith('/lovearea/assets/')) return 'public, max-age=31536000, immutable';
   if (urlPath.startsWith('/cdn/') || urlPath.startsWith('/admin-thumbs/') || urlPath.startsWith('/lovearea/root-files/')) return 'public, max-age=86400';
   if (ext === '.html') return 'no-cache';
+  // This site's own JS/CSS (not lovearea's content-hashed bundle) changes
+  // as this project is actively worked on and has no cache-busting
+  // filename hash — a stale cached copy silently keeps old behavior
+  // (broken button routes, old API calls) well after a fix has shipped.
+  if (urlPath.startsWith('/site/') && (ext === '.js' || ext === '.css')) return 'no-cache';
   return 'public, max-age=3600';
 }
 
@@ -145,11 +152,13 @@ function templateFile(slug) {
 
 // Templates sourced from lovearea.in — a client-rendered React app, not
 // the Next.js flight-payload format the rest of this project's editing
-// pipeline (admin-lib.js) understands. These are preview-only for now:
-// no Customize button, no admin-panel text/photo editing, just a working
-// Preview link into the app's own client-side router. slug is prefixed
-// "love-" to keep it visually distinct from the Next.js template slugs
-// and to guarantee no collision with anything already in templates/.
+// pipeline (admin-lib.js) understands. Editable through a separate path:
+// the bundled JS was patched (see lovearea/assets/index-*.js) so each
+// template's defaultData deep-merges a visitor override in at render
+// time; lovearea-schemas.json holds each one's field shape for the
+// customize form. slug is prefixed "love-" to keep it visually distinct
+// from the Next.js template slugs and to guarantee no collision with
+// anything already in templates/.
 const LOVEAREA_TEMPLATES = [
   { category: 'birthday', design: 'dreamy-scrapbook', title: 'Dreamy Scrapbook (Birthday)' },
   { category: 'birthday', design: 'dreamy-cloudscape', title: 'Dreamy Cloudscape (Birthday)' },
@@ -181,7 +190,8 @@ const LOVEAREA_TEMPLATES = [
 ].map((t) => ({
   slug: `love-${t.category}-${t.design}`.toLowerCase().replace(/_/g, '-'),
   title: t.title,
-  editable: false,
+  editable: true,
+  isLovearea: true,
   previewUrl: `/template/${t.category}/${t.design}?preview=true`,
 }));
 
@@ -315,6 +325,82 @@ async function handleApi(req, res, pathname) {
     }
   }
 
+  // GET /api/public/lovearea-schema/:slug -> {category, design, sample}
+  // sample prefills the customize-love.html form; its shape came from
+  // reading the bundled app's own default-data objects (see
+  // lovearea-schemas.json / the extraction that produced it).
+  const loveSchemaMatch = pathname.match(/^\/api\/public\/lovearea-schema\/([^/]+)$/);
+  if (req.method === 'GET' && loveSchemaMatch) {
+    const entry = LOVEAREA_SCHEMAS[loveSchemaMatch[1]];
+    if (!entry) return sendJson(res, 404, { error: 'unknown template' });
+    return sendJson(res, 200, entry);
+  }
+
+  // POST /api/public/lovearea/preview -> {slug, data, previewId} -> a live
+  // preview, reusing the exact same /g/<id> render path (creation JSON +
+  // the boot script's ?creation=<id> fetch) but under a short-lived
+  // "_preview-<id>" id instead of a permanent one, overwritten on every
+  // "Refresh preview" click from the same tab so repeated edits don't pile
+  // up files on disk.
+  if (req.method === 'POST' && pathname === '/api/public/lovearea/preview') {
+    try {
+      const { slug, data, previewId } = await readJsonBody(req);
+      if (!/^[a-z0-9-]+$/i.test(previewId || '')) throw new Error('invalid previewId');
+      const entry = LOVEAREA_SCHEMAS[slug];
+      if (!entry) throw new Error('unknown template');
+      const id = `_preview-${previewId}`;
+      fs.mkdirSync(loveCreationsDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(loveCreationsDir, `${id}.json`),
+        JSON.stringify({ slug, category: entry.category, design: entry.design, data }),
+        'utf8'
+      );
+      return sendJson(res, 200, { url: `/template/${entry.category}/${entry.design}?creation=${id}` });
+    } catch (e) {
+      return sendJson(res, 400, { error: e.message });
+    }
+  }
+
+  // POST /api/public/lovearea/create -> {slug, data} -> permanent shareable
+  // page. Unlike the Next.js-template flow, nothing gets rendered to HTML
+  // here — the visitor's edited data is just stored, and the patched
+  // lovearea bundle renders it live (deep-merged onto the template's real
+  // defaults) whenever /g/<id> is visited.
+  if (req.method === 'POST' && pathname === '/api/public/lovearea/create') {
+    try {
+      const { slug, data } = await readJsonBody(req);
+      const entry = LOVEAREA_SCHEMAS[slug];
+      if (!entry) throw new Error('unknown template');
+      const id = newId();
+      fs.mkdirSync(loveCreationsDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(loveCreationsDir, `${id}.json`),
+        JSON.stringify({ slug, category: entry.category, design: entry.design, data }),
+        'utf8'
+      );
+      const proto = req.headers['x-forwarded-proto'] || 'http';
+      const fullUrl = `${proto}://${req.headers.host}/g/${id}`;
+      logCreation({ id, slug, url: fullUrl, ip: clientIp(req) });
+      return sendJson(res, 200, { id, url: `/g/${id}` });
+    } catch (e) {
+      return sendJson(res, 400, { error: e.message });
+    }
+  }
+
+  // GET /api/public/lovearea-creation/:id -> {slug, data}, fetched by
+  // lovearea/index.html's boot script (before the app's module script
+  // runs) whenever it's loaded via /g/<id>'s redirect with ?creation=<id>.
+  const loveCreationMatch = pathname.match(/^\/api\/public\/lovearea-creation\/([A-Za-z0-9_-]+)$/);
+  if (req.method === 'GET' && loveCreationMatch) {
+    try {
+      const raw = fs.readFileSync(path.join(loveCreationsDir, `${loveCreationMatch[1]}.json`), 'utf8');
+      const { slug, data } = JSON.parse(raw);
+      return sendJson(res, 200, { slug, data });
+    } catch {
+      return sendJson(res, 404, { error: 'not found' });
+    }
+  }
+
   // POST /api/public/upload -> a visitor's own photo/music, isolated from
   // the shared template-seeds assets used by the master templates.
   if (req.method === 'POST' && pathname === '/api/public/upload') {
@@ -420,6 +506,12 @@ function cleanupStalePreviews() {
       if (f.startsWith('_preview-')) fs.unlinkSync(path.join(generatedDir, f));
     }
   } catch {}
+  try {
+    fs.mkdirSync(loveCreationsDir, { recursive: true });
+    for (const f of fs.readdirSync(loveCreationsDir)) {
+      if (f.startsWith('_preview-')) fs.unlinkSync(path.join(loveCreationsDir, f));
+    }
+  } catch {}
 }
 
 // The actual request handler, exported so a merged single-process server
@@ -459,6 +551,20 @@ function handleSiteRequest(req, res) {
       return;
     }
 
+    // A stale bookmark, browser autocomplete, or old link can still land
+    // someone on the old customize form with a lovearea slug (?slug=love-…)
+    // — that form's endpoints only know about the Next.js-template flow and
+    // 400 for these. Redirect to the right form instead of erroring, no
+    // matter how the visitor arrived at the URL.
+    if (pathname === '/site/customize.html') {
+      const slugParam = new URL(req.url, 'http://x').searchParams.get('slug') || '';
+      if (Object.prototype.hasOwnProperty.call(LOVEAREA_SCHEMAS, slugParam)) {
+        res.writeHead(302, { Location: `/site/customize-love.html?slug=${encodeURIComponent(slugParam)}` });
+        res.end();
+        return;
+      }
+    }
+
     if (!isPubliclyServable(pathname)) {
       res.writeHead(404); res.end('Not found');
       return;
@@ -474,6 +580,23 @@ function handleSiteRequest(req, res) {
 
     // pretty shareable URL: /g/<id> -> site/generated/<id>.html
     const gMatch = pathname.match(/^\/g\/([A-Za-z0-9_-]+)$/);
+
+    // A lovearea.in creation shares the same /g/<id> link shape as every
+    // other template, but there's no rendered HTML file for it — it's a
+    // client-rendered app, so instead this redirects to the real client
+    // route (?preview=false implied) with the creation id attached; the
+    // app's own boot script fetches and injects the saved data before it
+    // renders. Checked before the generated-HTML path below.
+    if (gMatch) {
+      try {
+        const raw = fs.readFileSync(path.join(loveCreationsDir, `${gMatch[1]}.json`), 'utf8');
+        const { category, design } = JSON.parse(raw);
+        res.writeHead(302, { Location: `/template/${category}/${design}?creation=${gMatch[1]}` });
+        res.end();
+        return;
+      } catch { /* not a lovearea creation — fall through to the normal /g/<id> path */ }
+    }
+
     // lovearea.in templates: /assets/* and the loose root files (music,
     // favicon) map straight into lovearea/; any /template/<category>/<slug>
     // path is a client-side route the bundled React app resolves itself,

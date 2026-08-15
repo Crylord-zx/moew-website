@@ -1,6 +1,7 @@
 # user-generated content — never commit this, it's created at runtime
 site/generated/*.html
 site/uploads/**
+site/lovearea-creations/**
 creations-log.json
 
 # local edit history for the admin panel
@@ -8,6 +9,9 @@ admin-backups/
 
 # admin login credentials (salted hash, but still — never commit this)
 admin-auth.json
+
+# local safety backups made while patching the lovearea bundle
+lovearea/assets/*.original-backup
 
 # OS / editor noise
 .DS_Store

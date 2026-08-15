@@ -14,7 +14,83 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap"
     rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet" />
-  <script type="module" crossorigin src="/assets/index-DgLINzUQ.js"></script>
+  <script>
+    // These templates' own "Back" buttons are internal react-router Links
+    // (to this source app's own "/" or "/template/<category>") or call
+    // window.history.back() — either way they stay inside this app instead
+    // of returning to Meow Webpages. Intercept the click before react-router
+    // sees it and force a real navigation to our own home page.
+    // Inside the customize form's live-preview iframe, there's no "our own
+    // home page" to send it to — that would just replace the tiny preview
+    // with the full gallery. There, back/exit should simply do nothing.
+    var inPreviewFrame = window.self !== window.top;
+    function goBack() {
+      if (inPreviewFrame) return;
+      window.location.href = '/';
+    }
+    document.addEventListener('click', function (e) {
+      var el = e.target.closest('a, button');
+      if (!el) return;
+      var text = (el.textContent || '').trim().toLowerCase();
+      var anchor = el.tagName === 'A' ? el : el.closest('a');
+      var href = anchor ? (anchor.getAttribute('href') || '') : '';
+      var isInternalNavLink = /^\/($|template(\/|$))/.test(href);
+      if (text === 'back' || isInternalNavLink) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        goBack();
+      }
+    }, true);
+    window.history.back = goBack;
+
+    // Deep-merges a visitor's saved customization onto a template's real
+    // default data. Used by the patched bundle at each template's
+    // defaultData site, instead of a full replace, so fields the visitor
+    // never touched (including ones we can't safely serialize, like an
+    // icon component reference) keep working exactly as before.
+    window.__meowMerge = function (base, override) {
+      if (!override) return base;
+      if (Array.isArray(override)) return override;
+      if (typeof override !== 'object' || typeof base !== 'object' || base === null) return override;
+      var out = Object.assign({}, base);
+      for (var k in override) {
+        if (!Object.prototype.hasOwnProperty.call(override, k)) continue;
+        var ov = override[k];
+        if (ov && typeof ov === 'object' && !Array.isArray(ov) && base[k] && typeof base[k] === 'object' && !Array.isArray(base[k])) {
+          out[k] = window.__meowMerge(base[k], ov);
+        } else {
+          out[k] = ov;
+        }
+      }
+      return out;
+    };
+
+    // A shared, permanent link (/g/<id>) 302-redirects here with
+    // ?creation=<id>. Fetch the visitor's saved data BEFORE the app's
+    // module script runs, so window.__MEOW_OVERRIDES__ is already in
+    // place by the time the template's defaultData is first read.
+    (function boot() {
+      var creationId = new URLSearchParams(location.search).get('creation');
+      function loadApp() {
+        var m = document.createElement('script');
+        m.type = 'module';
+        m.crossOrigin = '';
+        m.src = '/assets/index-DgLINzUQ.js';
+        document.head.appendChild(m);
+      }
+      if (!creationId) { loadApp(); return; }
+      fetch('/api/public/lovearea-creation/' + encodeURIComponent(creationId))
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (creation) {
+          if (creation && creation.slug && creation.data) {
+            window.__MEOW_OVERRIDES__ = {};
+            window.__MEOW_OVERRIDES__[creation.slug] = creation.data;
+          }
+        })
+        .catch(function () {})
+        .then(loadApp);
+    })();
+  </script>
   <link rel="stylesheet" crossorigin href="/assets/index-xEid6EGe.css">
   <style>
     /* Hides this source app's own login/checkout upsell chrome — these

@@ -1,0 +1,1692 @@
+{
+  "love-birthday-dreamy-scrapbook": {
+    "category": "birthday",
+    "design": "dreamy-scrapbook",
+    "sample": {
+      "name": "My Darling",
+      "age": "Age",
+      "introMessage": "IT'S YOUR DAY..",
+      "subIntroMessage": "And I made something special for you..♡",
+      "greetingMessage": "Happy birthday (name)",
+      "greetingPhotoKey": "greetingPhoto",
+      "countdownMessage": "Now, close your eyes and make a wish",
+      "envelopeMessage": "For you, (name) ",
+      "letterTitle": "My love..",
+      "letterContent": "Happy Birthday to the one who makes my world softer and my days brighter. Your smile brings me peace, your presence feels like home, and your happiness will always matter to me the most. I may not be perfect, but I promise to choose you — on good days, hard days, and everything in between. You matter more than you know, today and always.",
+      "letterSignOff": "Forever yours,",
+      "galleryPhotos": [
+        {
+          "id": 1,
+          "imageKey": "photo1",
+          "caption": "Chapter 21"
+        },
+        {
+          "id": 2,
+          "imageKey": "photo2",
+          "caption": "Always You"
+        },
+        {
+          "id": 3,
+          "imageKey": "photo3",
+          "caption": "Lucky to Have You"
+        }
+      ],
+      "closingMessage": "Lucky to have you 💙 Always you.",
+      "noPageText": "Are you sure? It's your birthday 🥺"
+    }
+  },
+  "love-birthday-dreamy-cloudscape": {
+    "category": "birthday",
+    "design": "dreamy-cloudscape",
+    "sample": {
+      "name": "My Love",
+      "age": "25",
+      "introMessage": "Warning: Too much love ahead proceed carefully",
+      "introSubtext": "A special surprise is waiting for you ✿",
+      "greetingMessage": "Happy Birthday, My Angel",
+      "wishMessage": "Scratch the cards to reveal hidden messages",
+      "scratchCards": [
+        {
+          "id": 1,
+          "imageKey": "",
+          "hiddenMessage": "You are the most beautiful star in my sky.",
+          "revealed": false
+        },
+        {
+          "id": 2,
+          "imageKey": "",
+          "hiddenMessage": "May your day be as sweet and soft as a cloud.✿",
+          "revealed": false
+        },
+        {
+          "id": 3,
+          "imageKey": "",
+          "hiddenMessage": "To the person who makes my heart fly high!✿",
+          "revealed": false
+        },
+        {
+          "id": 4,
+          "imageKey": "",
+          "hiddenMessage": "I'm so lucky to have you as my angel.✿",
+          "revealed": false
+        }
+      ],
+      "letterTitle": "To My Dearest...",
+      "letterContent": "Happy Birthday, My Angel! You are the reason behind my smiles and the peace in my heart. Every moment spent with you feels like floating on soft, pink clouds. May your year be filled with as much magic and love as you bring into my life. Forever and always, I'll be by your side.✿",
+      "letterSignOff": "With all my love,",
+      "memoryCards": [
+        {
+          "id": 1,
+          "imageKey": "",
+          "title": "First Hello",
+          "description": "The day my world changed",
+          "year": "2020"
+        },
+        {
+          "id": 2,
+          "imageKey": "",
+          "title": "Best Adventure",
+          "description": "Making magic together",
+          "year": "2021"
+        },
+        {
+          "id": 3,
+          "imageKey": "",
+          "title": "Core Moment",
+          "description": "Laughter and happiness",
+          "year": "2022"
+        },
+        {
+          "id": 4,
+          "imageKey": "",
+          "title": "Always Us",
+          "description": "To many more years!",
+          "year": "2023"
+        }
+      ],
+      "cloudWishes": [
+        {
+          "id": 1,
+          "wish": "Endless Joy ",
+          "icon": "star",
+          "color": "#FFB6C1"
+        },
+        {
+          "id": 2,
+          "wish": "Bliss ",
+          "icon": "cloud",
+          "color": "#B9E2FF"
+        },
+        {
+          "id": 3,
+          "wish": "Dream big",
+          "icon": "heart",
+          "color": "#FFD1DC"
+        },
+        {
+          "id": 4,
+          "wish": "Shine always",
+          "icon": "flower",
+          "color": "#FFF8DC"
+        },
+        {
+          "id": 5,
+          "wish": "Everlasting Love",
+          "icon": "balloon",
+          "color": "#FFA6C9"
+        }
+      ],
+      "closingMessage": "May every dream you have come true, and may I always be there to celebrate each one with you. You are my favorite everything",
+      "noPageText": "Wait... there’s something more for you",
+      "finalMessage": "Happy Birthday, My Angel!✿",
+      "galleryTitle": "Our Core Memories",
+      "gallerySubtitle": "The moments that define us"
+    }
+  },
+  "love-birthday-birthday-template": {
+    "category": "birthday",
+    "design": "birthday_template",
+    "sample": {
+      "name": "Enter Name",
+      "startTitle": "A Special Surprise Awaits!",
+      "startSubtitle": "Only for you (name) 💖",
+      "questionText": "Are you excited for what’s next?",
+      "yesText": "Yes",
+      "noText": "No",
+      "giftNote": "Happy Birthday (name) \nYou are the most beautiful part of my life.\nMay this year bring endless happiness ",
+      "celebrationImageKey": "celebration",
+      "previewImageKey": "happy1",
+      "finalFlowerMessage": "Just like these flowers... you make everything around you bloom",
+      "roseHeading": "YOUR ROSE BOUQUET 🌹",
+      "roseMessages": [
+        "You are my sunshine ☀️",
+        "Happy Birthday (name) 💖",
+        "You make my world beautiful 🌸",
+        "I’m lucky to have you 🥺",
+        "Forever yours 💍",
+        "You are my favorite person 💕"
+      ]
+    }
+  },
+  "love-birthday-premium-surprise": {
+    "category": "birthday",
+    "design": "premium-surprise",
+    "sample": {
+      "name": "Cutiepie",
+      "age": "21",
+      "loadingText": "Crafting your special moment...",
+      "introTitle": "A Cutiepie was born today, (age) years ago!",
+      "introSubtitle": "Yes, it’s YOU! A little surprise awaits...",
+      "introButtonText": "Start the surprise",
+      "cakeTitle": "Happy Birthday, (name)!",
+      "balloonTitle": "Pop all 4 balloons",
+      "memoriesTitle": "Some Sweet Moments",
+      "memoriesSubtitle": "(Swipe the cards)",
+      "memoriesButtonText": "Open My Message",
+      "messageCardTitle": "A Special Message",
+      "messageCardTapToOpen": "Tap to Open",
+      "fullMessage": "Happy Birthday, (name)!\n\nYou deserve all the happiness, love, and smiles in the world today and always. You have this special way of making everything around you brighter, your smile, your kindness, and the way you make people feel truly cared for. I hope your day is filled with laughter, surprises, and moments that make your heart happy.",
+      "giftTitle": "One Last Thing...",
+      "giftSubtitle": "Tap the gift",
+      "finalLoveText": "Lots of love for you ❤️",
+      "finalMessage": "Once again, Happy Birthday (name)! Hope you loved your surprise.",
+      "replayButtonText": "Replay",
+      "galleryPhotos": [
+        {
+          "id": 1,
+          "imageKey": "",
+          "caption": "Our first date"
+        },
+        {
+          "id": 2,
+          "imageKey": "",
+          "caption": "That funny day"
+        },
+        {
+          "id": 3,
+          "imageKey": "",
+          "caption": "A beautiful evening"
+        }
+      ]
+    }
+  },
+  "love-birthday-midnight-romance": {
+    "category": "birthday",
+    "design": "midnight-romance",
+    "sample": {
+      "name": "My Love",
+      "age": "25",
+      "introHeading": "Something magical is waiting for you",
+      "introTitle": "A Special Surprise Awaits!",
+      "introSubtitle": "Only for the most amazing person in the world... YOU! ",
+      "introButtonText": "Start My Surprise",
+      "excitedQuestion": "Are you excited for what's next? 🤭",
+      "excitedYes": "YES!",
+      "excitedNo": "Wait.?",
+      "introTitleNo": "Aww, Why?",
+      "introSubtitleNo": "Don't worry, I have something that will definitely make you smile! Trust me? ",
+      "countdownSeconds": 60,
+      "countdownMessage": "Gift will open only after 12 AM 💖",
+      "duduDialogue1": "Wait till it's 12 AM, my love 💕",
+      "bubuDialogue1": "I can't wait!!! 🤭",
+      "duduDialogue2": "You have to, my babyy... just a few seconds more 🎀😘",
+      "bubuDialogue2": "Okay... but hurry up! 💗",
+      "birthdayTitle": "A Cutiepie Was Born {age} Years Ago",
+      "birthdaySubtitle": "And today, the world celebrates the most beautiful soul ever",
+      "poetryTitle": "For You, My Everything",
+      "poetryLines": [
+        "In the quiet of the midnight sky,",
+        "I find my heart beating only for you.",
+        "You are the star that lights my darkest night,",
+        "The melody that makes my soul take flight.",
+        "Every moment with you feels like a dream,",
+        "A beautiful story written in moonbeam.",
+        "Happy Birthday, my forever and always,",
+        "I'll love you till the end of my days."
+      ],
+      "celebrationTitle": "Let's Celebrate You",
+      "celebrationMessage": "Today is the celebration of the most precious soul this universe has ever created. A person whose smile can heal hearts, whose laughter feels like music, and whose presence turns ordinary moments into unforgettable memories. Somewhere years ago, the world became brighter, softer, and so much more beautiful because YOU were born. Every little thing about you feels magical — your kindness, your warmth, your cute little expressions, and the way you make everyone around you feel loved without even trying. Today isn’t just your birthday… it’s the anniversary of the day happiness entered this world. 🎀",
+      "photoTitle": "Our Beautiful Journey",
+      "photoSubtitle": "Every moment with you is a treasure",
+      "photos": [
+        {
+          "id": 1,
+          "imageKey": "",
+          "caption": "Our First Date",
+          "rotation": -8,
+          "scale": 1.1,
+          "x": 5,
+          "y": 5,
+          "zIndex": 3
+        },
+        {
+          "id": 2,
+          "imageKey": "",
+          "caption": "That Special Night",
+          "rotation": 6,
+          "scale": 0.95,
+          "x": 35,
+          "y": 10,
+          "zIndex": 2
+        },
+        {
+          "id": 3,
+          "imageKey": "",
+          "caption": "Forever Us",
+          "rotation": -4,
+          "scale": 1.05,
+          "x": 15,
+          "y": 40,
+          "zIndex": 4
+        },
+        {
+          "id": 4,
+          "imageKey": "",
+          "caption": "My Favorite Smile",
+          "rotation": 10,
+          "scale": 0.9,
+          "x": 55,
+          "y": 35,
+          "zIndex": 1
+        },
+        {
+          "id": 5,
+          "imageKey": "",
+          "caption": "Dream Come True",
+          "rotation": -6,
+          "scale": 1,
+          "x": 25,
+          "y": 65,
+          "zIndex": 5
+        },
+        {
+          "id": 6,
+          "imageKey": "",
+          "caption": "Love You Most",
+          "rotation": 4,
+          "scale": 1.15,
+          "x": 60,
+          "y": 60,
+          "zIndex": 3
+        }
+      ],
+      "reasonsTitle": "Reasons Why You’re My Favorite Person 💕",
+      "reasons": [
+        {
+          "id": 1,
+          "text": "Your beautiful smile lights up my world"
+        },
+        {
+          "id": 2,
+          "text": "The way you laugh at my silly jokes"
+        },
+        {
+          "id": 3,
+          "text": "Your kindness knows no bounds"
+        },
+        {
+          "id": 4,
+          "text": "You make every ordinary day feel magical"
+        },
+        {
+          "id": 5,
+          "text": "How you always know when I need a hug"
+        },
+        {
+          "id": 6,
+          "text": "Your eyes sparkle when you're happy"
+        },
+        {
+          "id": 7,
+          "text": "The way you care for everyone around you"
+        },
+        {
+          "id": 8,
+          "text": "Your passion for the things you love"
+        },
+        {
+          "id": 9,
+          "text": "How you believe in me even when I don't"
+        },
+        {
+          "id": 10,
+          "text": "Your soft and gentle heart"
+        },
+        {
+          "id": 11,
+          "text": "The way you hold my hand so tightly"
+        },
+        {
+          "id": 12,
+          "text": "How you make me feel like I can do anything"
+        },
+        {
+          "id": 13,
+          "text": "Your sense of humor and quick wit"
+        },
+        {
+          "id": 14,
+          "text": "The peace I feel when I'm with you"
+        },
+        {
+          "id": 15,
+          "text": "Simply because you are YOU"
+        },
+        {
+          "id": 16,
+          "text": "The way you remember the little things"
+        },
+        {
+          "id": 17,
+          "text": "How you make me feel safe and loved"
+        },
+        {
+          "id": 18,
+          "text": "Your beautiful soul that shines so bright"
+        },
+        {
+          "id": 19,
+          "text": "The way our hearts beat as one"
+        },
+        {
+          "id": 20,
+          "text": "You are my favorite part of every day"
+        }
+      ],
+      "bouquetTitle": "A Bouquet For The One Who Owns My Heart",
+      "bouquetMessages": [
+        "Forever yours",
+        "You make my world beautiful",
+        "You are my sunshine",
+        "Happy Birthday my love",
+        "I'm lucky to have you",
+        "You are my favorite person "
+      ],
+      "letterTitle": "To My Dearest...",
+      "letterContent": "My Love,\n\nAs the clock strikes midnight and a new year of your beautiful life begins, I want you to know that you are the most precious gift the universe has ever given me.\n\nEvery sunrise reminds me of your warmth. Every star reminds me of your sparkle. Every breeze carries whispers of your name.\n\nYou are not just my partner — you are my best friend, my confidant, my safe harbor, and my greatest adventure. With you, I have found a love so deep, so true, that it transcends every word I could ever write.\n\nOn this special day, I promise to love you more fiercely than yesterday and less than tomorrow. I promise to stand by you, to dream with you, to grow with you, and to cherish every single moment we share.\n\nHappy Birthday, my love. May this year bring you all the joy, success, and love you deserve — and may I always be the one holding your hand through it all.\n\nForever Yours,",
+      "letterSignOff": "With all my heart,",
+      "finalMessage": "And once again… the world got lucky the day you were born Because no matter how many stars shine in the sky, none of them could ever glow as beautifully as your soul does. You are the kind of person people write stories about, the kind of love poets dream of, and the kind of happiness that only comes once in a lifetime. I hope every second of your life reminds you how deeply loved, endlessly cherished, and incredibly special you truly are. Thank you for existing, for smiling, for loving, and for making this world feel warmer just by being in it. Happy Birthday to the most beautiful chapter of my life.",
+      "bgMusic": "/merenaamtu.mp3"
+    }
+  },
+  "love-birthday-bestie-birthday": {
+    "category": "birthday",
+    "design": "bestie_birthday",
+    "sample": {
+      "name": "(Bestie)",
+      "year": "2018",
+      "chaosTitle": "Happy Birthday to my Favorite Chaos!",
+      "dramaPartnerSince": "Certified Drama Partner Since",
+      "introText": [
+        "Initializing Best Friend Scanner...",
+        "Scanning Best Friend Data...",
+        "Please wait..."
+      ],
+      "stats": [
+        {
+          "label": "Phone Calls Survived",
+          "value": "1,247"
+        },
+        {
+          "label": "Midnight Food Missions",
+          "value": "62"
+        },
+        {
+          "label": "Laugh Attacks",
+          "value": "Infinite"
+        },
+        {
+          "label": "Dumb Decisions",
+          "value": "Too Many"
+        }
+      ],
+      "galleryPhotos": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "galleryCaptions": [
+        "The Iconic Duo",
+        "Chaos Level: 100",
+        "Main Character Energy",
+        "Core Memory"
+      ],
+      "messageNote": "To my partner in crime, thank you for being the person who knows all my secrets and still likes me. Happy Birthday!",
+      "insideJokes": [
+        "The 3 AM Maggi Incident 🍜",
+        "That one time at the mall... 🛍️",
+        "Our 2-hour 'short' calls 📞",
+        "The 'No judgements' pact 🤝"
+      ],
+      "finalWish": "Happy Birthday! Here's to another year of legendary chaos, endless laughter, and being the best friend I could ever ask for.",
+      "contractTitle": "Friendship Contract",
+      "contractItems": [
+        "I agree to listen to all rants without judgment.",
+        "I agree to share 50% of all future pizzas.",
+        "I agree to continue being the chaotic bestie."
+      ],
+      "wishTitle": "Make a wish & Blow!",
+      "tapToBlowText": "TAP TO BLOW",
+      "finalHeading": "Happy Birthday {name}!"
+    }
+  },
+  "love-birthday-sibling-birthday-quest": {
+    "category": "birthday",
+    "design": "sibling-birthday-quest",
+    "sample": {
+      "bootUp": {
+        "title": "✨ Sibling Radar Activated ✨",
+        "step1": "Scanning for the world's cutest sibling...",
+        "step2": "Measuring chaos levels & giggle frequency...",
+        "step3": "Confirming Favorite Sibling status...",
+        "success": "Best Sibling In The World — Found!"
+      },
+      "character": {
+        "photoUrl": "https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=2070&auto=format&fit=crop",
+        "title": "Player Two Has Entered the Chat 💙",
+        "trait1Label": "Kindness",
+        "kindness": 99,
+        "trait2Label": "Humor",
+        "humor": 100,
+        "glowLabel": "Sparkle Level:",
+        "glow": "LEGENDARY",
+        "ageLabel": "Level (Age):",
+        "age": 22
+      },
+      "levels": [
+        {
+          "id": "level-1",
+          "year": 2012,
+          "age": 10,
+          "bossName": "Boss: A Childhood Filled with Fun, Laughter, and Adventures",
+          "won": true
+        },
+        {
+          "id": "level-2",
+          "year": 2016,
+          "age": 14,
+          "bossName": "Boss: Discovering New Hobbies and Creating Amazing Memories",
+          "won": true
+        },
+        {
+          "id": "level-3",
+          "year": 2020,
+          "age": 18,
+          "bossName": "Boss: Studying Hard and Taking Big Steps Towards Your Dreams",
+          "won": true
+        },
+        {
+          "id": "level-4",
+          "year": 2024,
+          "age": 22,
+          "bossName": "Boss: Becoming Stronger, Wiser, and Ready for New Adventures",
+          "won": true
+        }
+      ],
+      "evolution": {
+        "pixelatedPhotoUrl": "https://images.unsplash.com/photo-1544253303-34e8e19e0ee2?q=80&w=1928&auto=format&fit=crop",
+        "hdPhotoUrl": "https://images.unsplash.com/photo-1544253303-34e8e19e0ee2?q=80&w=1928&auto=format&fit=crop"
+      },
+      "dialogue": {
+        "initialRoast": "Happy Birthday! Another year older, wiser... and somehow still just as annoying. Achievement unlocked: Birthday Legend.",
+        "choices": {
+          "roastMore": {
+            "buttonText": "[ Tease More ]",
+            "response": "You may be getting older, but don't worry—you'll always be the same funny, annoying, and lovable person to me. Also, don't eat all the cake!"
+          },
+          "showLove": {
+            "buttonText": "[ Say Something Nice ]",
+            "response": "Okay, I'll admit it... life wouldn't be nearly as fun without you. I'm really lucky to have you as my sibling. Happy Birthday!"
+          }
+        }
+      },
+      "bonusRound": {
+        "reasons": [
+          "You make ordinary moments special just by being there and filling them with laughter.",
+          "No matter how much we argue, I know I can always count on you when it truly matters.",
+          "You have been a part of my happiest memories and have made my life so much more fun.",
+          "You support me, encourage me, and remind me that I never have to face things alone.",
+          "Having you as my sibling is one of the greatest gifts, and I wouldn't trade our bond for anything."
+        ],
+        "initials": "B & S"
+      },
+      "finalBoss": {
+        "hp": 22,
+        "victoryLetter": "Happy Birthday!🎂 . Here's to another amazing year filled with smiles, success, and beautiful memories."
+      },
+      "letter": {
+        "salutation": "Dear Brother/Sister,",
+        "body": [
+          "Happy Birthday! Wishing you a day filled with love, laughter, and everything that makes you smile.",
+          "No matter how much we fight or tease each other, I am truly grateful to have you in my life and I am so proud of the person you are becoming.",
+          "May this new year of your life bring you happiness, success, good health, and many beautiful memories. May all your dreams come true."
+        ],
+        "signOff": "Love, your annoying sibling",
+        "signature": "Someone Who Loves You",
+        "psNote": "P.S. You will always be my favorite teammate."
+      },
+      "headings": {
+        "happyBirthdayTitle": "Cheers to 22 Amazing Years! 🎂",
+        "happyBirthdaySubtitle": "Wishing you the happiest of birthdays!",
+        "levelsTitle": "Our Story So Far 🧡",
+        "scratchTitle": "A Locked Memory 💕",
+        "scratchSubtitle": "scratch to reveal",
+        "dialogueTitle": "Narrator says:",
+        "starsTitle": "Bonus Round: Catch the Wishes ⭐",
+        "starsSubtitle": "Tap the falling stars!",
+        "bossTitle": "🎂 Final Boss: The Birthday Cake 🎂",
+        "bossInstruction": "Tap rapidly to attack the cake!",
+        "bossLoot": "Tap to Open 🎁",
+        "letterTitle": "🏆 You Win... My Heart 🏆"
+      }
+    }
+  },
+  "love-birthday-birthday-love-diary": {
+    "category": "birthday",
+    "design": "birthday-love-diary",
+    "sample": {
+      "name": "My Love",
+      "age": "22",
+      "introMessage": "A Little Diary...",
+      "subIntroMessage": "A tiny collection of love, laughter, memories, and birthday wishes, created especially for the most special person in my life ♡",
+      "greetingMessage": "Happy Birthday, My Love! 🎂",
+      "greetingSubText": "Today is all about you and the happiness you bring into my life. I hope your day is filled with love, laughter, and beautiful memories✨",
+      "balloonTitle": "Pop all 4 balloons to reveal a message 🎈",
+      "countdownMessage": "Ready? Close your eyes, count to three, make a secret wish, and let the birthday magic begin! 🕯️✨",
+      "agePrefix": "It's been",
+      "ageSuffix": "beautiful years 🌸",
+      "memoriesTitle": "Our Little Memories",
+      "galleryPhotos": [
+        {
+          "id": 1,
+          "imageKey": "photo1",
+          "caption": "Us, always 🤍"
+        },
+        {
+          "id": 2,
+          "imageKey": "photo2",
+          "caption": "My favourite chapter"
+        },
+        {
+          "id": 3,
+          "imageKey": "photo3",
+          "caption": "Lucky to have you"
+        },
+        {
+          "id": 4,
+          "imageKey": "photo4",
+          "caption": "Forever and always ✨"
+        }
+      ],
+      "flowerMessage": "Every time I see a blooming flower, I think about how lucky I am to have someone as wonderful as you in my life. You bring joy where there is sadness, hope where there is doubt, and love in the simplest moments. Just like a flower quietly makes the world more beautiful, you make my life more beautiful simply by being in it 🌸🌷",
+      "scratchTitle": "5 Reasons I Love You",
+      "reasons": [
+        {
+          "emoji": "🌙",
+          "reason": "The way you smile when you think no one's watching"
+        },
+        {
+          "emoji": "✨",
+          "reason": "How you make every ordinary day feel like magic"
+        },
+        {
+          "emoji": "🌸",
+          "reason": "Your laugh is my favourite sound in the world"
+        },
+        {
+          "emoji": "💌",
+          "reason": "Your little texts just to say you're thinking of me"
+        },
+        {
+          "emoji": "🎀",
+          "reason": "How you remember every tiny thing that matters to me"
+        },
+        {
+          "emoji": "🌊",
+          "reason": "The way you hold my hand like you never want to let go"
+        },
+        {
+          "emoji": "🦋",
+          "reason": "Your kindness makes the whole world feel softer"
+        },
+        {
+          "emoji": "🍓",
+          "reason": "You always know exactly what I need without asking"
+        },
+        {
+          "emoji": "💫",
+          "reason": "The future feels brighter just because you're in it"
+        },
+        {
+          "emoji": "💖",
+          "reason": "You make me feel like the luckiest person alive, every day"
+        }
+      ],
+      "letterTitle": "To My Dearest...",
+      "letterContent": "Every page of my life since I met you has been filled with happiness. You make ordinary moments feel like magic. Happy Birthday, my love! I hope today brings you as much joy as you bring me every single day. Forever and always, I'm yours. ♡",
+      "letterSignOff": "With all my heart,",
+      "wishMessage": "Before the candles go out, take a moment to dream big. You deserve a life filled with love, success, unforgettable memories, and endless joy. ✨🎂",
+      "loveMessage": "Sending you all my love, the warmest hugs, the sweetest kisses, and endless good wishes. No matter the distance or the day, my heart will always find its way to you. 💋💕",
+      "closingMessage": "Happy Birthday to the Most Wonderful Person in My Life! 🎀💖",
+      "closingSubText": "May this new chapter of your life be filled with endless happiness, beautiful memories, good health, success, and all the love your heart can hold. Thank you for being the reason behind so many of my smiles. You deserve nothing but the very best, today and always. 🌸✨",
+      "finaleTitle": "Wishing You a Lifetime of Happiness 🎂",
+      "finaleTagline": "No matter where life takes us or how much time passes, my heart will always choose you. Here's to celebrating you today and loving you for all the tomorrows to come. ♡ Forever & Always ♡",
+      "noPageText": "Are you sure?? It's your birthday! 🥺"
+    }
+  },
+  "love-birthday-disco-bestie": {
+    "category": "birthday",
+    "design": "disco-bestie",
+    "sample": {
+      "name": "Bestie",
+      "loadingText": "Getting the party started...",
+      "introTitle": "It's Time to Party!",
+      "introSubtitle": "Someone special was born today... and that's YOU, (bestie!)",
+      "introButtonText": "Let's Dance",
+      "danceTitle": "Shake it off, Bestie!",
+      "danceSubtitle": "Tap the dancers to reveal your birthday message",
+      "cakeTitle": "Make a wish, Bestie! 🎂",
+      "cakeInstruction": "tap image to blow",
+      "memoryTitle": "Our Best Moments",
+      "memorySubtitle": "Swipe through our memories 💕",
+      "messageTitle": "From My Heart to Yours",
+      "fullMessage": "Happy Birthday to my ride-or-die! \n\nYou're not just my best friend, you're my chosen family. Through every laugh, every tear, and every crazy adventure, you've been by my side. I hope this year brings you as much joy as you bring to everyone around you.\n\nLove you to the moon and back! 💖",
+      "giftTitle": "A Special Surprise",
+      "giftSubtitle": "Tap to unwrap your gift",
+      "finalTitle": "Party On, Bestie! ",
+      "finalMessage": "May your day be filled with love, laughter, and lots of cake!",
+      "replayText": "Party Again",
+      "bestiePhotos": [
+        {
+          "id": 1,
+          "url": "",
+          "caption": "That crazy night out"
+        },
+        {
+          "id": 2,
+          "url": "",
+          "caption": "Our coffee dates"
+        },
+        {
+          "id": 3,
+          "url": "",
+          "caption": "Forever memories"
+        }
+      ]
+    }
+  },
+  "love-birthday-party-bash": {
+    "category": "birthday",
+    "design": "party-bash",
+    "sample": {
+      "welcomeTitle": "Ready to Party?",
+      "welcomeSubtitle": "I have a special birthday surprise for you (name)! ♡",
+      "noPageText": "Wait! Don't you want to see your surprise? 🥺",
+      "selectionTitle": "Pick Your Gift",
+      "selectionSubtitle": "Each box holds a special surprise.. Choose one by one!",
+      "celebrationTitle": "For My Sunshine",
+      "celebrationMessage": "Happy Birthday (enter name)! Thank you for being you. May your life always be filled with love, peace, and beautiful moments",
+      "memoryTitle": "Our Sweet Moments",
+      "galleryPhotos": [
+        {
+          "id": 1,
+          "imageKey": "photo1",
+          "caption": "Chapter 21"
+        },
+        {
+          "id": 2,
+          "imageKey": "photo2",
+          "caption": "Always You"
+        },
+        {
+          "id": 3,
+          "imageKey": "photo3",
+          "caption": "My Favorite Smile"
+        }
+      ],
+      "wishTitle": "Spin the Birthday Wheel ",
+      "wishSubtitle": "Tap to spin and unlock your surprise… Hug, Cake, Wish or a Secret Gift 💖",
+      "finalMessage": "I hope this made your day a little more magical. Happy Birthday! 🎂"
+    }
+  },
+  "love-valentine-ultimate-valentine": {
+    "category": "valentine",
+    "design": "ultimate_valentine",
+    "sample": {
+      "name": "My Forever",
+      "welcomeQuote": "In a world full of temporary things, you are my perpetual feeling of home.",
+      "secrets": [
+        {
+          "id": 1,
+          "tag": "Memory 01",
+          "text": "The first time we locked eyes, the world went silent.",
+          "imageKey": "together",
+          "x": 20,
+          "y": 30,
+          "color": "text-rose-400"
+        },
+        {
+          "id": 2,
+          "tag": "Secret 02",
+          "text": "I keep every 'Hi' you ever sent me in a special place in my heart.",
+          "imageKey": "together1",
+          "x": 70,
+          "y": 25,
+          "color": "text-pink-400"
+        },
+        {
+          "id": 3,
+          "tag": "Reason 03",
+          "text": "You don't just complete me; you help me become a better version of myself.",
+          "imageKey": "together2",
+          "x": 30,
+          "y": 65,
+          "color": "text-rose-500"
+        },
+        {
+          "id": 4,
+          "tag": "Forever 04",
+          "text": "If I could have anyone in the world, it would still always be you.",
+          "imageKey": "together3",
+          "x": 75,
+          "y": 70,
+          "color": "text-red-400"
+        }
+      ],
+      "questionHeading": "Will you be my Valentine?",
+      "successHeading": "YAY! SHE SAID YES!",
+      "finalHeading": "LOVE FOREVER",
+      "successMsg": "You've just made me the happiest person in the entire universe. I can't wait for our forever.",
+      "pleadingImageKey": "ques",
+      "noReactionImageKeys": [
+        "ifno",
+        "ifno1",
+        "ifno2",
+        "ifno3",
+        "ifno4",
+        "please",
+        "please1",
+        "cheesey",
+        "cheesey2",
+        "cheesey1"
+      ]
+    }
+  },
+  "love-valentine-cupid": {
+    "category": "valentine",
+    "design": "cupid",
+    "sample": {
+      "receiverName": "My Love",
+      "scene1Title": "Special Delivery...",
+      "scene1Subtitle": "For",
+      "scene2Title": "Unlock My Heart",
+      "scene3Title": "A Secret Awaits You",
+      "scene4CheesyLabel": "Swipe please",
+      "proposalText": "Will you be my Valentine?",
+      "scene6SuccessText": "I Knew It 😭❤️"
+    }
+  },
+  "love-valentine-love-adventure": {
+    "category": "valentine",
+    "design": "love_adventure",
+    "sample": {
+      "name": "Your Secret Admirer",
+      "partnerName": "My Love",
+      "introText": "Happy Valentine's Day Baby",
+      "polaroids": [
+        {
+          "id": 1,
+          "imageKey": "couple1",
+          "caption": "First Date",
+          "backText": "I still remember the butterflies in my stomach that day. Best decision ever!"
+        },
+        {
+          "id": 2,
+          "imageKey": "couple2",
+          "caption": "Adventure",
+          "backText": "Every trip with you is a new chapter of our beautiful story."
+        },
+        {
+          "id": 3,
+          "imageKey": "couple3",
+          "caption": "Laughter",
+          "backText": "Your smile is my favorite thing in the world. Never stop laughing with me."
+        },
+        {
+          "id": 4,
+          "imageKey": "couple4",
+          "caption": "Together",
+          "backText": "Side by side, hand in hand. Thinking of everything we've built together."
+        },
+        {
+          "id": 5,
+          "imageKey": "couple5",
+          "caption": "Forever",
+          "backText": "This is just the beginning. I promise to love you more every single day."
+        }
+      ],
+      "journeySteps": {
+        "plane": "Love is in the air...",
+        "truck": "Traveling miles to see you...",
+        "mailbox": "You've got mail!"
+      },
+      "coupons": [
+        {
+          "id": 1,
+          "title": "Dinner Date",
+          "description": "I love you in the little moments… your smile, your voice, your silly talks. You make my world softer and happier.",
+          "isLocked": true,
+          "unlockCost": 3
+        },
+        {
+          "id": 2,
+          "title": "Massage",
+          "description": "Happy Valentine’s Day my love. You are my favorite feeling, my safest place, and my sweetest blessing. I’m so lucky to have you.",
+          "isLocked": true,
+          "unlockCost": 5
+        },
+        {
+          "id": 3,
+          "title": "Movie Night",
+          "description": "Dear my love, Today you get the full royal treatment. You relax, you smile… and I’ll do everything to make you feel the most loved.",
+          "isLocked": true,
+          "unlockCost": 8
+        }
+      ],
+      "galleryImages": [
+        "couple",
+        "couple1",
+        "couple2",
+        "couple3",
+        "couple4",
+        "couple5"
+      ],
+      "finalProposal": {
+        "question": "Will you be my Valentine?",
+        "successMessage": "I knew you'd say Yes!"
+      }
+    }
+  },
+  "love-valentine-enchanted-valentine": {
+    "category": "valentine",
+    "design": "enchanted-valentine",
+    "sample": {
+      "proposalSmallText": "Hey there,",
+      "proposalMainText": "Will you be my Valentine?",
+      "noPageText": "I promise you'll like it 💗",
+      "surpriseTitle": "I made these just for you",
+      "surpriseSubtitle": "Tap a card to open your surprise ✨",
+      "memoriesHeading": "Moments I'll always hold close",
+      "memories": [
+        "propose",
+        "together1",
+        "together"
+      ],
+      "letterHeading": "Words from my heart 💌",
+      "letterContent": "  I don't say this enough, but you mean more to me than I could ever explain. You came into my life so naturally, and somehow made everything feel lighter, warmer, and more meaningful. I'm so grateful for you. For your kindness, your patience, and the love you give without even trying. Being with you feels like home, and choosing you will always feel easy. So today, and every day after, I choose you. Happy Valentine's Day. Always yours.",
+      "couponsHeading": "Love Coupons",
+      "couponsSubtitle": "Just for you",
+      "coupons": [
+        {
+          "text": "Movie night of your choice 🍿",
+          "icon": "🎬"
+        },
+        {
+          "text": "Unlimited hugs 🤗",
+          "icon": "🫂"
+        },
+        {
+          "text": "One deep late-night talk 🌙",
+          "icon": "💬"
+        },
+        {
+          "text": "Dessert on me 🍰",
+          "icon": "🍨"
+        }
+      ],
+      "roseHeading": "YOUR ROSE BOUQUET",
+      "roseMessages": [
+        "You are my favorite place 💗",
+        "I will always love you 💞",
+        "Every moment with you is special ",
+        "With you, everything feels right ",
+        "You are my today & all my tomorrows 💍",
+        "You're my favorite person, always 💕"
+      ],
+      "finalText": "I knew it 💗 You make me so happy!"
+    }
+  },
+  "love-valentine-artisan-affection": {
+    "category": "valentine",
+    "design": "artisan-affection",
+    "sample": {
+      "letterTitle": "A Special Message",
+      "letterContent": "From the moment we met, my life changed in the most beautiful way. Every laugh we share, every memory we build, it all means the world to me. You are my sunshine and my home. Will you stay by my side forever?",
+      "photoFrameText": "Forever Together",
+      "userPhoto": "https://images.unsplash.com/photo-1518199266791-5374a22e9687?w=800",
+      "proposalQuestion": "Will you be my Valentine? 💗",
+      "successText": "Awww I knew you couldn’t say no 😭💖 You’re my happiness"
+    }
+  },
+  "love-anniversary-first-anniversary": {
+    "category": "anniversary",
+    "design": "first-anniversary",
+    "sample": {
+      "name": "My Love",
+      "loadingText": "Opening our chapter...",
+      "relationshipStartDate": "2024-02-14",
+      "galleryPhotos": [
+        {
+          "id": 1,
+          "imageKey": "",
+          "caption": "Our first date ❤️"
+        },
+        {
+          "id": 2,
+          "imageKey": "",
+          "caption": "Lazy Sundays ☕"
+        },
+        {
+          "id": 3,
+          "imageKey": "",
+          "caption": "That one trip... ✈️"
+        }
+      ],
+      "musicPath": "/Until I Found You.mp3",
+      "useMusic": true,
+      "scenes": {
+        "cover": {
+          "title": "We Have Been Together ❤️",
+          "subtitle": "The Unfolding Chapter",
+          "bannerImage": "anniversarybanner"
+        },
+        "theSpark": {
+          "heading": "The Spark ",
+          "subtext": "It all started with a simple moment that changed our lives forever.",
+          "image": "photo",
+          "decor": "hello"
+        },
+        "theRealUs": {
+          "heading": "The 'Real' Us 🤭",
+          "subtext": "Through the goofy fights and cozy silences, I'd choose you every single time.",
+          "imageLeft": "fight",
+          "imageRight": "cat"
+        },
+        "thePromise": {
+          "heading": "A Pinky Promise? 🤙",
+          "subtext": "A million promises kept, and a billion more to go. Stay by my side?",
+          "promiseImage": "pinkypromise"
+        },
+        "loveMeter": {
+          "title": "Love Meter",
+          "subtitle": "Our love grows stronger every single second.",
+          "targetValue": 100
+        },
+        "promises": {
+          "title": "Our Promises",
+          "list": [
+            "I promise to always choose you",
+            "I promise to be your biggest fan",
+            "I promise to grow with you",
+            "I promise to never let go"
+          ]
+        },
+        "loveQuiz": {
+          "question": "Where was our very first date?",
+          "options": [
+            "The Coffee Shop",
+            "The Beach",
+            "The Movie Theater",
+            "The Park"
+          ],
+          "correctAnswer": "The Coffee Shop"
+        },
+        "reasonsWhy": {
+          "title": "Reasons Why You Matter",
+          "reasons": [
+            "Your smile fixes my worst days",
+            "You understand me without words",
+            "I see my forever in you",
+            "Wherever you are, that's home",
+            "Life feels softer with you",
+            "You are my calm in every storm"
+          ]
+        },
+        "memories": {
+          "title": "Our Favorite Bits",
+          "subtitle": "365 days of building a world that belongs only to us.",
+          "swipe": "Swipe please",
+          "buttonText": "Keep Going"
+        },
+        "theCommitment": {
+          "heading": "To Forever ⏳",
+          "subtext": "You make 'forever' feel like it's just not long enough.",
+          "mainImage": "forever",
+          "penguinImage": "penguin"
+        },
+        "final": {
+          "heading": "Happy Anniversary! ❤️",
+          "subtext": "Here's to a lifetime of more chapters.",
+          "message": "You are my reflection, my soulmate, and my best friend. Thank you for making this first year a dream come true.",
+          "cakeImage": "cake",
+          "flowerImage": "flowerdecoration",
+          "replayText": "Relive our story"
+        }
+      }
+    }
+  },
+  "love-anniversary-eternal-anniversary": {
+    "category": "anniversary",
+    "design": "eternal-anniversary",
+    "sample": {
+      "name": "Someone Special",
+      "password": "0101",
+      "passwordHint": "Enter Secret Key (e.g. 0512 \" default pass is 0101\")",
+      "musicPath": "/I Think They Call This Love.mp3",
+      "useMusic": true,
+      "scenes": {
+        "intro": {
+          "title": "Another Year. Another Forever.",
+          "subtitle": "Our journey is my favorite story.",
+          "bannerImage": "happy"
+        },
+        "timeline": {
+          "title": "Our Journey Timeline",
+          "memories": [
+            {
+              "id": "1",
+              "imageKey": "",
+              "title": "Where It All Began",
+              "description": "This was the day everything changed for the better.",
+              "caption": "The Spark"
+            },
+            {
+              "id": "2",
+              "imageKey": "",
+              "title": "Our First Smile Together",
+              "description": "I knew I was in trouble the moment I saw you smile.",
+              "caption": "First Smile"
+            },
+            {
+              "id": "3",
+              "imageKey": "",
+              "title": "Our Little Adventure",
+              "description": "With you, even normal days feel absolutely magical.",
+              "caption": "Adventure"
+            },
+            {
+              "id": "4",
+              "imageKey": "",
+              "title": "Through Everything",
+              "description": "Even our smallest fights only made us stronger.",
+              "caption": "Together"
+            },
+            {
+              "id": "5",
+              "imageKey": "",
+              "title": "Still Choosing You",
+              "description": "One year later… and I still get those butterflies.",
+              "caption": "Forever"
+            }
+          ]
+        },
+        "loveLetter": {
+          "to": "My Love",
+          "content": "This year with you has been the most beautiful chapter of my life. Thank you for choosing me every single day. You make my world brighter in ways I never thought possible.",
+          "closing": "Forever yours,",
+          "signature": "Me"
+        },
+        "puzzle": {
+          "text": "We weren't perfect. But we were perfect for each other."
+        },
+        "spinWheel": {
+          "title": "Spin For A Romantic Surprise",
+          "options": [
+            "10 Kisses 💋",
+            "Movie Night 🎬",
+            "Long Hug 🤗",
+            "Surprise Date 🌙",
+            "5 Compliments 🌸",
+            "Forever Promise 💍"
+          ]
+        },
+        "final": {
+          "hiddenMessage": "If I had to choose again, I would still choose you.",
+          "countdownDate": "2026-12-31",
+          "finalText": "Our story continues..."
+        }
+      }
+    }
+  },
+  "love-anniversary-celestial-love": {
+    "category": "anniversary",
+    "design": "celestial-love",
+    "sample": {
+      "name": "Someone Special",
+      "coupleNames": "Always & Forever",
+      "password": "1111",
+      "musicPath": "/Tera Hone Laga.mp3",
+      "useMusic": true,
+      "scenes": {
+        "passwordScene": {
+          "title": "Private Access",
+          "description": "Enter the secret key to unlock, (default pass is 1111)"
+        },
+        "intro": {
+          "textLines": [
+            "Among billions of people...",
+            "I found you.",
+            "And my stars aligned."
+          ]
+        },
+        "constellation": {
+          "title": "Written In The Stars",
+          "subtitle": "Forever Written in the Stars"
+        },
+        "gallery": {
+          "title": "Our Floating Memories",
+          "memories": [
+            {
+              "id": "1",
+              "imageKey": "",
+              "caption": "The beginning of us"
+            },
+            {
+              "id": "2",
+              "imageKey": "",
+              "caption": "A smile I'll never forget"
+            },
+            {
+              "id": "3",
+              "imageKey": "",
+              "caption": "Our favorite adventure"
+            },
+            {
+              "id": "4",
+              "imageKey": "",
+              "caption": "Through thick and thin"
+            },
+            {
+              "id": "5",
+              "imageKey": "",
+              "caption": "Forever starts now"
+            }
+          ]
+        },
+        "loveLetter": {
+          "to": "My Universe",
+          "content": "They say the stars are far away, but I found my entire galaxy in your eyes. This year has been the most magical orbit of my life, and I can't wait for a thousand more.",
+          "closing": "With all my love,",
+          "signature": "Your Constellation"
+        },
+        "wish": {
+          "title": "Make A Wish",
+          "starMessage": "Write your wish for our future...",
+          "placeholder": "Write it here...",
+          "buttonText": "WRITE TO THE STARS",
+          "successMessage": "This wish is now written in the stars."
+        },
+        "final": {
+          "message": "Under every sky... in every lifetime...",
+          "subtext": "I choose you."
+        }
+      }
+    }
+  },
+  "love-apology-ultimate-apology": {
+    "category": "apology",
+    "design": "ultimate-apology",
+    "sample": {
+      "name": "My Love",
+      "angerLevel": 100,
+      "scenes": {
+        "scene1": {
+          "question": "Are you still 100% angry at me?",
+          "imageKey": "tears",
+          "yesButtonText": "YES, I AM! 😤",
+          "noButtonText": "No, Not Really... ",
+          "angryTexts": [
+            "Are you still 100% angry at me?",
+            "Oyee 😭 please don't be angry...",
+            "Baby please forgive me na 🥺💗",
+            "Okay okay I deserve it 😭 but still sorryyy...",
+            "Itna gussa aap par acha nahi lagta 😭🎀",
+            "Last chance 😭 forgive me??"
+          ]
+        },
+        "scene1_1": {
+          "heading": "Okay... my heart is actually breaking 💔",
+          "subtext": "I know I messed up. Please just... give me one chance to explain? 🥺",
+          "buttonText": "Fine... I'll listen 😤"
+        },
+        "scene2": {
+          "heading": "A Virtual Peace Offering 💌",
+          "letterContent": "My Dearest name,\n\nI am so so sorry for being such a silly bear lately. I've realized how much I hurt you, and it breaks my heart to see you upset. \n\nYou mean the world to me, and I promise to be better, more patient, and way more cuddly! \n\nWill you please peek inside this letter and give me one more chance? 🙏",
+          "imageKey": "door",
+          "stampImageKey": "sorrytag"
+        },
+        "scene3": {
+          "text": "FORGIVENESS METER ❤️",
+          "instruction": "Tap the Heart to heal my heart!",
+          "imageKey": "sorryna",
+          "happyImageKey": "download"
+        },
+        "scene4": {
+          "vouchers": [
+            {
+              "id": "flowers",
+              "imageKey": "tulipbouquet",
+              "label": "Fresh Blooms 🌷",
+              "value": "Valid for 1 bouquet delivery + unlimited forehead kisses 💐💖"
+            },
+            {
+              "id": "teddy",
+              "imageKey": "teddy",
+              "label": "Cuddle Pass 🧸",
+              "value": "Valid for unlimited hugs, cuddles & no drama day 😭💗"
+            },
+            {
+              "id": "chocolate",
+              "imageKey": "chocolate",
+              "label": "Sweet Treat 🍫",
+              "value": "Valid for your favorite chocolate + my full attention 😌💞"
+            }
+          ]
+        },
+        "scene5": {
+          "heading": "PEACE TREATY SIGNED! 🕊️",
+          "subtext": "New Beginnings Ahead",
+          "message": "Thank you for being the most forgiving and wonderful person. I love you to the moon and back and I'm never letting go! ❤️🧸",
+          "finalImageKeys": [
+            "hug",
+            "loveyou",
+            "sweetheart",
+            "heartbouquet",
+            "cute"
+          ]
+        }
+      }
+    }
+  },
+  "love-apology-cute-sorry": {
+    "category": "apology",
+    "design": "cute-sorry",
+    "sample": {
+      "bestieName": "Bestie",
+      "loadingText": "Preparing my apology...",
+      "introTitle": "I Messed Up, {bestieName} 😢",
+      "introSubtitle": "But I'm ready to make it right. Will you hear me out?",
+      "startButton": "Listen to my heart 💝",
+      "scene1Title": "I Know I Hurt You",
+      "scene1Message": "Seeing you upset breaks my heart more than anything. I never meant to make you feel this way.",
+      "scene2Title": "You Mean Everything",
+      "scene2Message": "You're not just my best friend, you're my person. Life without our laughs is just... gray.",
+      "scene3Title": "I'm Truly Sorry",
+      "scene3Message": "I messed up, and I own it. No excuses, just genuine regret for hurting my favorite person.",
+      "scene4Title": "Let's Fix This",
+      "scene4Message": "I'll bring chocolates, hugs, and endless patience. Whatever it takes to see your smile again.",
+      "scene5Title": "Forgive Me?",
+      "scene5Message": "I promise to do better, to listen more, and to never take your friendship for granted again.",
+      "finalTitle": "Thank You, {bestieName} 💕",
+      "finalMessage": "Whether you forgive me now or need time, I’ll be here. You’re worth every apology in the world.",
+      "forgiveButton": "I Forgive You 🤗",
+      "replayText": "Watch Again",
+      "thankYouTitle": "Thank You!",
+      "thankYouSubtitle": "You're the best bestie ever!"
+    }
+  },
+  "love-holi-festive-joy": {
+    "category": "holi",
+    "design": "festive-joy",
+    "sample": {
+      "useMusic": true,
+      "musicPath": "/balam_pichkari.mp3",
+      "userName": "Your Name",
+      "scenes": {
+        "welcome": {
+          "title": "Ready for a Colorful Surprise?",
+          "subtitle": "Warning: This Holi comes with extra love and happiness!",
+          "buttonText": "Open the Colors"
+        },
+        "touchColor": {
+          "message": "You are the color my heart waited for in every season."
+        },
+        "memories": {
+          "title": "Our Colorful Memories",
+          "cards": [
+            {
+              "id": "1",
+              "image": {
+                "__unresolvedRef__": "rC"
+              },
+              "caption": "Our first smile"
+            },
+            {
+              "id": "2",
+              "image": {
+                "__unresolvedRef__": "oC"
+              },
+              "caption": "Our fun moment"
+            },
+            {
+              "id": "3",
+              "image": {
+                "__unresolvedRef__": "lC"
+              },
+              "caption": "Forever memories"
+            }
+          ]
+        },
+        "miniGame": {
+          "title": "Pop the Color Balloons!",
+          "balloonImage": {
+            "__unresolvedRef__": "_p"
+          },
+          "successMessages": [
+            "Joy",
+            "Happiness",
+            "Love",
+            "Together",
+            "You are cute",
+            "Sweetie",
+            "Colorful Heart"
+          ]
+        },
+        "message": {
+          "letterContent": [
+            "Dear Favourite,",
+            "May your life be as bright as gulal,",
+            "And as sweet as gujiya.",
+            "Wishing you a very Happy Holi!",
+            "With lots of love and color."
+          ]
+        },
+        "playTogether": {
+          "title": "Let's Play Holi Together!",
+          "splashImages": [
+            {
+              "__unresolvedRef__": "fx"
+            },
+            {
+              "__unresolvedRef__": "px"
+            },
+            {
+              "__unresolvedRef__": "_p"
+            },
+            {
+              "__unresolvedRef__": "Nw"
+            },
+            {
+              "__unresolvedRef__": "Nw"
+            },
+            {
+              "__unresolvedRef__": "iC"
+            },
+            {
+              "__unresolvedRef__": "aC"
+            }
+          ]
+        },
+        "final": {
+          "title": "Happy Holi!",
+          "wish": "May our lives always stay as colorful as today, filled with love, laughter, and endless togetherness.",
+          "image": {
+            "__unresolvedRef__": "cC"
+          }
+        }
+      }
+    }
+  },
+  "love-holi-color-my-heart": {
+    "category": "holi",
+    "design": "color-my-heart",
+    "sample": {
+      "music": {
+        "enabled": true,
+        "url": "https://assets.mixkit.co/music/preview/mixkit-celebration-spirit-84.mp3",
+        "volume": 0.5
+      },
+      "scenes": {
+        "colorHeart": {
+          "title": "Paint My World",
+          "subtitle": "Tap the colors to make my heart glow ",
+          "successText": "You filled it with love 💕"
+        },
+        "surpriseInvite": {
+          "title": "Hey Beautiful...",
+          "subtitle": "I made a tiny happiness just for you ",
+          "buttonText": "See Your Surprise 💌",
+          "image": {
+            "__unresolvedRef__": "rH"
+          }
+        },
+        "photostack": {
+          "title": "Every memory feels brighter with you...",
+          "subtitle": "Tap a photo to relive a moment ",
+          "photos": [
+            {
+              "id": 1,
+              "image": {
+                "__unresolvedRef__": "rC"
+              },
+              "caption": "Your smile colors my happiest days ❤️"
+            },
+            {
+              "id": 2,
+              "image": {
+                "__unresolvedRef__": "oC"
+              },
+              "caption": "With you, every moment feels magical "
+            },
+            {
+              "id": 3,
+              "image": {
+                "__unresolvedRef__": "lC"
+              },
+              "caption": "Creating endless memories together 💕"
+            }
+          ]
+        },
+        "letter": {
+          "badge": "Made with love 💖",
+          "greeting": "My Favorite Person,",
+          "lines": [
+            "Just like colors make Holi special,",
+            "you make my life brighter every day.",
+            "Your presence adds happiness",
+            "to even my simplest moments.",
+            "Thank you for being my smile,",
+            "my comfort, and my happiness."
+          ],
+          "signoff": "Forever Yours ",
+          "buttonText": "One more surprise →"
+        },
+        "virtualHug": {
+          "title": "A Warm Hug For You 🤍",
+          "instruction": "Press & Hold",
+          "holdText": "Holding you tight virtually 💕"
+        },
+        "hugReceived": {
+          "title": "Hug Delivered!",
+          "subtitle": "Happy Holi, (name)! May our journey always be filled with colorful memories, endless smiles, and the warmth of togetherness 💕",
+          "buttonText": "Start Over",
+          "image": {
+            "__unresolvedRef__": "C3"
+          }
+        }
+      }
+    }
+  },
+  "love-cheerup-mood-cheerup": {
+    "category": "cheerup",
+    "design": "mood-cheerup",
+    "sample": {
+      "scene1Title": "🥺 Is my Baby(Name) still sad?",
+      "scene1Subtitle": "I came here just to check on you...",
+      "scene1BtnYes": "💛 Yes, a little...",
+      "scene1BtnNo": "🌸 No, I'm okay!",
+      "scene1YesReaction": "Aww... Come here.",
+      "scene1YesSubtitle": "I have a little surprise for you. 💕",
+      "scene1NoReaction": "Yayyyy!! That's my Baby! 🌸",
+      "scene1NoSubtitle": "But I still made something special for you.",
+      "scene1BtnGift": "🎁 Open My Gift",
+      "scene2CardLine1": "I just wanted to remind you...",
+      "scene2CardLine2": "You're loved.",
+      "scene2CardLine3": "You're important.",
+      "scene2CardLine4": "And you deserve to smile every single day. 💛",
+      "scene2BtnContinue": "✨ Continue",
+      "scene3Title": "🎉 A Little Happiness Party!",
+      "scene3Subtitle": "Today we're celebrating something special...",
+      "scene3Highlight": "✨ YOUR BEAUTIFUL SMILE! 💛",
+      "scene3BtnNext": "One Last Surprise 💖",
+      "scene4Text": "No matter what happens...\nI'll always be here.\nSo please don't stay sad for too long. Because your smile is my favorite. 💛",
+      "scene4Demand1": "No more crying.",
+      "scene4Demand2": "No more overthinking.",
+      "scene4Demand3": "No more being sad.",
+      "scene4Demand4": "Okay Bubu? 🥺💛",
+      "scene4BtnPromise": "🤝 I Promise",
+      "finalText": "That's my Bubu! 💛\nNow keep smiling...\nBecause you look cutest when you smile. 🌸✨",
+      "senderName": "Someone Who Cares 💛",
+      "receiverName": "Someone Special 🌸"
+    }
+  },
+  "love-confession-proposal-surprise": {
+    "category": "confession",
+    "design": "proposal-surprise",
+    "sample": {
+      "letterTitle": "A Small Confession From My Heart",
+      "letterContent": "I don't know when it started, but somewhere between our conversations and smiles, you became very special to me. Every little moment with you feels different and beautiful. I tried to keep this feeling to myself, but my heart refuses to stay silent anymore. So today, I just want to say that I really like you (name) and I care about you more than words can explain.",
+      "photoFrameText": "The Moment You Became Special",
+      "userPhoto": "",
+      "proposalQuestion": "Will you give my feelings a chance ?",
+      "successText": "You just made my heart the happiest in the world ❤️"
+    }
+  },
+  "love-crushday-crush-day": {
+    "category": "crushday",
+    "design": "crush-day",
+    "sample": {
+      "introEyebrow": "a note found in your pocket",
+      "introTitle": "I think I have a crush on you... 💕 [Make it yours]",
+      "crushName": "You",
+      "introMessage": "Okay, this is scary to admit, but here goes... I've been smiling at my phone way too much lately, and it's kind of your fault. So I made you this instead of just saying it out loud like a normal person.",
+      "budCaption": "still just a tiny crush... tap it 🌱",
+      "bloomCaption": "there. official crush status. 🌹",
+      "signsTitle": "signs i might be catching feelings",
+      "signs": [
+        "I reread our texts and laugh again like it's the first time",
+        "I somehow always know when you're online",
+        "I've planned three different ways to bring this up to you",
+        "My camera roll has way too many screenshots of you",
+        "I get nervous-excited every time my phone buzzes",
+        "I made an entire website instead of just texting you this"
+      ],
+      "butterflyTitle": "you give me butterflies",
+      "butterflyMessage": "literally. tap anywhere and watch what happens 🦋",
+      "bottleTitle": "a message i almost never sent",
+      "bottleMessage": "Hi. \nIf you're reading this, it means I finally got brave enough to hit send. I like you — your weird laugh, the way you overthink your texts just like me, all of it. I don't know what this means yet, but I know I didn't want to keep it to myself anymore.",
+      "wishTitle": "what i'm wishing for",
+      "wishes": [
+        "that you feel the same way",
+        "more late night texting",
+        "an excuse to see you soon",
+        "you actually reading this whole thing",
+        "us, maybe? 👀"
+      ],
+      "askQuestion": "so... will you be my gf/bf, officially?",
+      "yesResponse": "knew it. best decision you've made all week 💌",
+      "suspenseTitle": "i have something to show you...",
+      "suspensePrompt": "close your eyes, tap when you're ready 👀",
+      "revealCaption": "surprise. it's you. it's always been you.",
+      "revealPhoto": {
+        "url": ""
+      },
+      "memoryTitle": "let's make this official",
+      "memoryCaption": "our first (unofficial) photo together",
+      "memoryPhoto": {
+        "url": ""
+      },
+      "closingEyebrow": "to be continued...",
+      "closingMessage": "thanks for reading this far. now text me back 💌"
+    }
+  },
+  "love-date-cute-date-asking": {
+    "category": "date",
+    "design": "cute-date-asking",
+    "sample": {
+      "proposalTitle": "Will you go on a date with me [their Name]?",
+      "proposalSubtitle": "I've been thinking about this for a while... 🌸 [Add your own little message 💕]",
+      "yesBtnText": "YES 💕",
+      "noBtnText": "NO 🙈",
+      "yesTitle": "Wait… you said yes?!",
+      "yesSubtitle": "I honestly wasn't expecting that 😂",
+      "yesBody": "You just made my day! 💕 [Tell them how happy you are...]",
+      "datePickerTitle": "When are you free [Name]?",
+      "bouquetTitle": "Which flowers should I bring for you?",
+      "foodTitle": "What should we eat together?",
+      "pickupTitle": "I'll come pick you up [Name]!",
+      "pickupSubtitle": "Be ready with your beautiful smile. 💕",
+      "coffeeTitle": "Maybe we'll spend hours talking over coffee...",
+      "coffeeSubtitle": "Just you, me, and a warm cup. ☁️",
+      "funnyTitle": "This will literally be me after you said YES! 💃😂 [Write your own funny line]",
+      "waitingTitle": "Me waiting excitedly until our date...",
+      "romanticTitle": "Some moments become memories forever.",
+      "romanticSubtitle": "Let's create ours together. 💖",
+      "surpriseTitle": "A tiny surprise is waiting for you!",
+      "finalTitle": "It's a date [Name]! 💖",
+      "finalSubtitle": "Thank you for saying yes.",
+      "finalBody": "I can't wait to see you and spend an amazing day together. 🌸 Now the countdown begins [Write your own message for them] 💕",
+      "senderName": "Your Secret Admirer",
+      "receiverName": "You"
+    }
+  },
+  "love-girlfriendday-perfect-girlfriend": {
+    "category": "girlfriendday",
+    "design": "perfect-girlfriend",
+    "sample": {
+      "awardTitle": "BEST GIRLFRIEND AWARD",
+      "awardSubtitle": "this award is presented to:",
+      "awardName": "Lara Jean",
+      "awardMessage": "You are the most precious person I have ever had. I just wanna say thankyou for being in my life listening to all my rants and being there when i needed you the most.",
+      "reasons": [
+        "The way you laugh at your own jokes before you finish telling them",
+        "How you remember the tiny things I forget about myself",
+        "Your terrible singing that I secretly love",
+        "How you make any place feel like home",
+        "The way you listen to all my rants without judging me"
+      ],
+      "musicTitle": "Until I Found You",
+      "musicSubtitle": "“A song that reminds me of you”",
+      "songUrl": "https://youtu.be/GxldQ9eX2wo?si=15YfI5Z8e6-bO-y6",
+      "jarTitle": "Everything I LOVE ABOUT You",
+      "jarHearts": [
+        "your smile",
+        "your hugs",
+        "your eyes",
+        "your voice",
+        "how you care for me<3",
+        "your gestures",
+        "how you listen to me<3"
+      ],
+      "bouquetMessage": "To my amazing girl, \nThank you for being my rock, my safe place, and my greatest adventure. You make every ordinary day feel like magic. Here’s to us and all the beautiful memories yet to come.",
+      "galleryTitle": "Our Beautiful Memories",
+      "galleryPhotos": [
+        {
+          "id": 1,
+          "url": ""
+        },
+        {
+          "id": 2,
+          "url": ""
+        },
+        {
+          "id": 3,
+          "url": ""
+        }
+      ],
+      "kissMessage": "Tap anywhere to send a kiss 💋",
+      "closingMessage": "Here's to us — today, tomorrow, and always. I love you."
+    }
+  }
+}
