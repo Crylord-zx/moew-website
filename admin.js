@@ -83,7 +83,7 @@ async function loadTemplateList() {
         <span class="label">${escapeHtml(title)}<span class="slug">${isLovearea ? 'no master copy — customize only' : escapeHtml(slug) + '.html'}</span></span>
       `;
       if (isLovearea) {
-        btn.addEventListener('click', () => window.open(`/site/customize-love.html?slug=${encodeURIComponent(slug)}`, '_blank'));
+        btn.addEventListener('click', () => window.open(`/site/customize-love.html?slug=${encodeURIComponent(slug)}&admin=1`, '_blank'));
       } else {
         btn.addEventListener('click', () => selectTemplate(slug, btn));
       }

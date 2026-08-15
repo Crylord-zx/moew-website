@@ -1,5 +1,11 @@
 const params = new URLSearchParams(location.search);
 const slug = params.get('slug');
+// Reached only via the admin panel's own link for a lovearea template —
+// saves become the new master default for everyone instead of a single
+// shareable page. Harmless if guessed by a non-admin: the save endpoint
+// itself lives in admin-server.js and is session-gated same as every
+// other admin write.
+const isAdminMode = params.get('admin') === '1';
 // one stable id per tab, reused for every "Refresh preview" click so we
 // overwrite the same temp file on the server instead of piling up new ones
 const previewId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
@@ -77,6 +83,11 @@ async function init() {
     categoryDesign = { category: out.category, design: out.design };
     currentData = JSON.parse(JSON.stringify(out.sample));
     templateTitleEl.textContent = slug.replace(/^love-/, '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    if (isAdminMode) {
+      createBtn.textContent = 'Save as master copy →';
+      document.querySelector('#customizeSidebar .hint').textContent =
+        'This becomes the new default for every future customization and preview link — not a single shareable page.';
+    }
     renderFields();
     await refreshPreview();
   } catch (e) {
@@ -365,9 +376,22 @@ refreshPreviewBtn.addEventListener('click', refreshPreview);
 
 createBtn.addEventListener('click', async () => {
   createBtn.disabled = true;
-  createStatusEl.textContent = 'Creating your page…';
+  createStatusEl.textContent = isAdminMode ? 'Saving…' : 'Creating your page…';
   createStatusEl.className = '';
   try {
+    if (isAdminMode) {
+      const res = await fetch(`/api/lovearea/${encodeURIComponent(slug)}/master`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: currentData }),
+      });
+      const out = await res.json();
+      if (!res.ok) throw new Error(out.error);
+      createStatusEl.textContent = 'Saved as master copy ✓';
+      createStatusEl.className = '';
+      return;
+    }
+
     const res = await fetch('/api/public/lovearea/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

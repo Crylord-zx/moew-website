@@ -23,6 +23,7 @@ const zlib = require('zlib');
 const { extractSnapshot, writeSnapshot } = require('./admin-lib');
 const { isEnabled } = require('./template-visibility');
 const { logCreation } = require('./creations-log');
+const { getMaster: getLoveMaster } = require('./lovearea-master');
 
 const root = __dirname;
 const templatesDir = path.join(root, 'templates');
@@ -329,12 +330,29 @@ async function handleApi(req, res, pathname) {
   // GET /api/public/lovearea-schema/:slug -> {category, design, sample}
   // sample prefills the customize-love.html form; its shape came from
   // reading the bundled app's own default-data objects (see
-  // lovearea-schemas.json / the extraction that produced it).
+  // lovearea-schemas.json / the extraction that produced it) — unless
+  // admin has saved a master copy for this slug, in which case every new
+  // customization starts from that instead, same as editing a master
+  // templates/*.html file changes what future customizations prefill to.
   const loveSchemaMatch = pathname.match(/^\/api\/public\/lovearea-schema\/([^/]+)$/);
   if (req.method === 'GET' && loveSchemaMatch) {
     const entry = LOVEAREA_SCHEMAS[loveSchemaMatch[1]];
     if (!entry || !isEnabled(loveSchemaMatch[1])) return sendJson(res, 404, { error: 'unknown template' });
-    return sendJson(res, 200, entry);
+    const master = getLoveMaster(loveSchemaMatch[1]);
+    return sendJson(res, 200, master ? { ...entry, sample: master } : entry);
+  }
+
+  // GET /api/public/lovearea-master/:slug -> {data} | 404
+  // Used by lovearea/index.html's own boot script for a *bare* preview
+  // link (no ?creation=<id>, e.g. the gallery's "Preview" button) — that
+  // path never goes through the customize form at all, so without this
+  // it would keep showing the bundle's original hardcoded text forever,
+  // even after admin saves a master copy.
+  const loveMasterReadMatch = pathname.match(/^\/api\/public\/lovearea-master\/([^/]+)$/);
+  if (req.method === 'GET' && loveMasterReadMatch) {
+    const data = getLoveMaster(loveMasterReadMatch[1]);
+    if (!data) return sendJson(res, 404, { error: 'no master copy set' });
+    return sendJson(res, 200, { data });
   }
 
   // POST /api/public/lovearea/preview -> {slug, data, previewId} -> a live

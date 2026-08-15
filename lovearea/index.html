@@ -84,13 +84,37 @@
         m.src = '/assets/index-DgLINzUQ.js?v=2';
         document.head.appendChild(m);
       }
-      if (!creationId) { loadApp(); return; }
-      fetch('/api/public/lovearea-creation/' + encodeURIComponent(creationId))
+      if (creationId) {
+        fetch('/api/public/lovearea-creation/' + encodeURIComponent(creationId))
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (creation) {
+            if (creation && creation.slug && creation.data) {
+              window.__MEOW_OVERRIDES__ = {};
+              window.__MEOW_OVERRIDES__[creation.slug] = creation.data;
+            }
+          })
+          .catch(function () {})
+          .then(loadApp);
+        return;
+      }
+
+      // A bare preview link (no ?creation=, e.g. the gallery's "Preview"
+      // button) never goes through the customize form — without this,
+      // it would show the bundle's original hardcoded text forever, even
+      // after admin saves a master copy. Path is /template/<category>/
+      // <design>; the slug is derived the same way it's built everywhere
+      // else server-side (site-server.js's LOVEAREA_TEMPLATES mapping).
+      var pathParts = location.pathname.split('/').filter(Boolean);
+      var slug = pathParts[0] === 'template' && pathParts[1] && pathParts[2]
+        ? ('love-' + pathParts[1] + '-' + pathParts[2]).toLowerCase().replace(/_/g, '-')
+        : null;
+      if (!slug) { loadApp(); return; }
+      fetch('/api/public/lovearea-master/' + encodeURIComponent(slug))
         .then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (creation) {
-          if (creation && creation.slug && creation.data) {
+        .then(function (master) {
+          if (master && master.data) {
             window.__MEOW_OVERRIDES__ = {};
-            window.__MEOW_OVERRIDES__[creation.slug] = creation.data;
+            window.__MEOW_OVERRIDES__[slug] = master.data;
           }
         })
         .catch(function () {})

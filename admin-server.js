@@ -27,6 +27,7 @@ const authFile = path.join(root, 'admin-auth.json');
 // ones — admin can only see them, toggle visibility, and customize a page
 // the same way a visitor would.
 const LOVEAREA_SCHEMAS = JSON.parse(fs.readFileSync(path.join(root, 'lovearea-schemas.json'), 'utf8'));
+const { setMaster: setLoveMaster } = require('./lovearea-master');
 const port = process.env.PORT || 8899;
 // Now that login is required, it's safe to listen on all interfaces by
 // default — set HOST=127.0.0.1 instead if you'd rather keep using the
@@ -263,6 +264,27 @@ async function handleApi(req, res, pathname) {
       const { enabled } = await readJsonBody(req);
       setEnabled(slug, !!enabled);
       return sendJson(res, 200, { ok: true, enabled: !!enabled });
+    } catch (e) {
+      return sendJson(res, 400, { error: e.message });
+    }
+  }
+
+  // POST /api/lovearea/:slug/master -> {data} -> becomes the new default
+  // every future customization and bare preview starts from. There's no
+  // "master file" to edit for these the way there is for templates/*.html
+  // (their real defaults live inside the minified bundle) — this is
+  // instead a full data snapshot, read back by site-server.js's public
+  // schema endpoint (for new customizations) and by lovearea/index.html's
+  // own boot script (for bare, un-customized preview links), both merged
+  // in the same deep-merge way a visitor's own saved override is.
+  const loveMasterMatch = pathname.match(/^\/api\/lovearea\/([^/]+)\/master$/);
+  if (req.method === 'POST' && loveMasterMatch) {
+    try {
+      const slug = loveMasterMatch[1];
+      if (!LOVEAREA_SCHEMAS[slug]) throw new Error('unknown template');
+      const { data } = await readJsonBody(req);
+      setLoveMaster(slug, data);
+      return sendJson(res, 200, { ok: true });
     } catch (e) {
       return sendJson(res, 400, { error: e.message });
     }
