@@ -199,7 +199,7 @@ async function selectLoveTemplate(slug, btnEl) {
   editorEl.hidden = false;
   saveStatusEl.textContent = '';
   historyPanel.hidden = true;
-  historyBtn.hidden = true; // no backup/undo system for these yet
+  historyBtn.hidden = false;
   saveBtn.textContent = 'Save as master copy';
   editorTitleEl.textContent = slug.replace(/^love-/, '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   viewLiveLink.href = `/template/${out.category}/${out.design}?preview=true`;
@@ -372,7 +372,8 @@ historyBtn.addEventListener('click', async () => {
 async function loadHistory() {
   historyListEl.innerHTML = '<li class="empty">Loading…</li>';
   try {
-    const res = await fetch(`/api/templates/${currentSlug}/backups`);
+    const url = currentIsLovearea ? `/api/lovearea/${currentSlug}/backups` : `/api/templates/${currentSlug}/backups`;
+    const res = await fetch(url);
     const backups = await res.json();
     if (!res.ok) throw new Error(backups.error || 'failed to load history');
 
@@ -402,7 +403,8 @@ async function loadHistory() {
 async function restoreBackup(id) {
   if (!confirm('Restore this version? Your current version will be backed up first, so this can be undone.')) return;
   try {
-    const res = await fetch(`/api/templates/${currentSlug}/restore`, {
+    const url = currentIsLovearea ? `/api/lovearea/${currentSlug}/restore` : `/api/templates/${currentSlug}/restore`;
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),
@@ -411,9 +413,15 @@ async function restoreBackup(id) {
     if (!res.ok) throw new Error(out.error);
 
     // reload the form + preview to reflect the restored content
-    const snapRes = await fetch(`/api/templates/${currentSlug}`);
-    currentSnapshot = await snapRes.json();
-    renderSections();
+    if (currentIsLovearea) {
+      const schemaRes = await fetch(`/api/public/lovearea-schema/${encodeURIComponent(currentSlug)}`);
+      const schemaOut = await schemaRes.json();
+      loveForm.setData(JSON.parse(JSON.stringify(schemaOut.sample)));
+    } else {
+      const snapRes = await fetch(`/api/templates/${currentSlug}`);
+      currentSnapshot = await snapRes.json();
+      renderSections();
+    }
     reloadPreview();
     await loadHistory();
     saveStatusEl.textContent = 'Restored ✓';

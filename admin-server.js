@@ -224,6 +224,39 @@ function backupIdSafe(id) {
   return id;
 }
 
+// Same idea as the classic-template backups above, adapted for lovearea's
+// plain-data master copies (.json instead of .html) — slugs are already
+// namespaced ("love-..." never collides with a classic slug), so this
+// reuses the exact same backupDir(slug) function and directory.
+function loveBackupIdFor(now = new Date()) {
+  return now.toISOString().replace(/[:.]/g, '-') + '.json';
+}
+function makeLoveBackup(slug, data) {
+  const dir = backupDir(slug);
+  fs.mkdirSync(dir, { recursive: true });
+  const id = loveBackupIdFor();
+  fs.writeFileSync(path.join(dir, id), JSON.stringify(data), 'utf8');
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith('.json')).sort();
+  const excess = files.length - MAX_BACKUPS_PER_TEMPLATE;
+  if (excess > 0) {
+    for (const f of files.slice(0, excess)) fs.unlinkSync(path.join(dir, f));
+  }
+  return id;
+}
+function listLoveBackups(slug) {
+  const dir = backupDir(slug);
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir)
+    .filter((f) => f.endsWith('.json'))
+    .sort()
+    .reverse()
+    .map((f) => ({ id: f, savedAt: backupIdToIso(f.replace(/\.json$/, '.html')) }));
+}
+function loveBackupIdSafe(id) {
+  if (!/^[0-9TZ:.-]+\.json$/i.test(id)) throw new Error('invalid backup id');
+  return id;
+}
+
 async function handleApi(req, res, pathname) {
   // GET /api/templates  -> list of {slug, title, enabled}
   if (req.method === 'GET' && pathname === '/api/templates') {
@@ -284,7 +317,44 @@ async function handleApi(req, res, pathname) {
       const slug = loveMasterMatch[1];
       if (!LOVEAREA_SCHEMAS[slug]) throw new Error('unknown template');
       const { data } = await readJsonBody(req);
+      // back up whatever was live before this save overwrites it — same
+      // "every save is undoable" guarantee the classic templates have
+      const previous = getLoveMaster(slug);
+      let backupId = null;
+      if (previous) backupId = makeLoveBackup(slug, previous);
       setLoveMaster(slug, data);
+      return sendJson(res, 200, { ok: true, backupId });
+    } catch (e) {
+      return sendJson(res, 400, { error: e.message });
+    }
+  }
+
+  // GET /api/lovearea/:slug/backups -> list of {id, savedAt}
+  const loveBackupsMatch = pathname.match(/^\/api\/lovearea\/([^/]+)\/backups$/);
+  if (req.method === 'GET' && loveBackupsMatch) {
+    try {
+      if (!LOVEAREA_SCHEMAS[loveBackupsMatch[1]]) throw new Error('unknown template');
+      return sendJson(res, 200, listLoveBackups(loveBackupsMatch[1]));
+    } catch (e) {
+      return sendJson(res, 400, { error: e.message });
+    }
+  }
+
+  // POST /api/lovearea/:slug/restore -> {id} -> restores that backup as
+  // the current master (backing up the current one first, same as the
+  // classic templates' restore — always reversible)
+  const loveRestoreMatch = pathname.match(/^\/api\/lovearea\/([^/]+)\/restore$/);
+  if (req.method === 'POST' && loveRestoreMatch) {
+    try {
+      const slug = loveRestoreMatch[1];
+      if (!LOVEAREA_SCHEMAS[slug]) throw new Error('unknown template');
+      const { id } = await readJsonBody(req);
+      const safeId = loveBackupIdSafe(id);
+      const backupPath = path.join(backupDir(slug), safeId);
+      const restoredData = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
+      const current = getLoveMaster(slug);
+      if (current) makeLoveBackup(slug, current);
+      setLoveMaster(slug, restoredData);
       return sendJson(res, 200, { ok: true });
     } catch (e) {
       return sendJson(res, 400, { error: e.message });
