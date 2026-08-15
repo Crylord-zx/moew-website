@@ -75,7 +75,13 @@
         var m = document.createElement('script');
         m.type = 'module';
         m.crossOrigin = '';
-        m.src = '/assets/index-DgLINzUQ.js';
+        // ?v=2 busts any browser's cache from before this bundle was
+        // patched (see git history) — it's served immutable/1yr-cached
+        // since content-hashed filenames are supposed to never change
+        // content, so a same-filename in-place patch needs an explicit
+        // cache-bust or already-cached browsers keep the stale copy
+        // forever. Bump this any time the bundle is patched again.
+        m.src = '/assets/index-DgLINzUQ.js?v=2';
         document.head.appendChild(m);
       }
       if (!creationId) { loadApp(); return; }
