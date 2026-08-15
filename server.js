@@ -39,7 +39,7 @@
 // when you want one deployment to serve both.
 // ==========================================================
 const http = require('http');
-const { handleSiteRequest, cleanupStalePreviews } = require('./site-server');
+const { handleSiteRequest, cleanupStalePreviews, LOVEAREA_ROOT_FILES } = require('./site-server');
 const { handleAdminRequest, loadAuthConfig, signToken, verifyToken } = require('./admin-server');
 
 const port = process.env.PORT || 8800;
@@ -117,6 +117,28 @@ const server = http.createServer((req, res) => {
   // admin-server.js has no route for "/g/<id>" at all, since that's a
   // pretty-URL rewrite that only site-server.js knows how to handle.
   if (/^\/g\/[A-Za-z0-9_-]+$/.test(pathname)) {
+    handleSiteRequest(req, res);
+    return;
+  }
+
+  // The 27 lovearea templates' entire editing/preview/rendering system —
+  // the bundled app itself, its API endpoints, and the customize-love
+  // form — lives only in site-server.js. admin-server.js has no routes
+  // for any of it. Without this, opening the "customize this" link the
+  // admin panel offers for these templates would load the page fine (any
+  // static file serves from either handler) but every one of its API
+  // calls would 404, since an admin-mode browser would otherwise route
+  // them to admin-server.js instead. Same fix shape as the /g/<id>
+  // exemption above, just covering a wider set of paths.
+  if (
+    pathname.startsWith('/api/public/lovearea') ||
+    pathname.startsWith('/template/') ||
+    pathname.startsWith('/assets/') ||
+    pathname === '/api/public/upload' ||
+    pathname === '/site/customize-love.html' ||
+    pathname === '/site/customize-love.js' ||
+    LOVEAREA_ROOT_FILES.has(pathname)
+  ) {
     handleSiteRequest(req, res);
     return;
   }

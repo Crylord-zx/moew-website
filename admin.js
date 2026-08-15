@@ -67,18 +67,26 @@ async function loadTemplateList() {
     if (!res.ok) throw new Error(`API returned ${res.status} — are you running admin-server.js (not server.js)?`);
     const list = await res.json();
     templateListEl.innerHTML = '';
-    list.forEach(({ slug, title, enabled }) => {
+    list.forEach(({ slug, title, enabled, isLovearea, previewUrl }) => {
       const li = document.createElement('li');
       li.className = 'template-row';
 
       const btn = document.createElement('button');
       if (!enabled) btn.classList.add('disabled-template');
+      // lovearea templates have no master copy to edit here — they use a
+      // per-visitor override system (see customize-love.html), so the
+      // subtitle and click action both point there instead of the
+      // snapshot editor the other templates use.
       btn.innerHTML = `
         <img class="thumb" src="/admin-thumbs/${encodeURIComponent(slug)}.png" alt="" loading="lazy"
              onerror="this.style.visibility='hidden'" />
-        <span class="label">${escapeHtml(title)}<span class="slug">${escapeHtml(slug)}.html</span></span>
+        <span class="label">${escapeHtml(title)}<span class="slug">${isLovearea ? 'no master copy — customize only' : escapeHtml(slug) + '.html'}</span></span>
       `;
-      btn.addEventListener('click', () => selectTemplate(slug, btn));
+      if (isLovearea) {
+        btn.addEventListener('click', () => window.open(`/site/customize-love.html?slug=${encodeURIComponent(slug)}`, '_blank'));
+      } else {
+        btn.addEventListener('click', () => selectTemplate(slug, btn));
+      }
 
       const toggleWrap = document.createElement('label');
       toggleWrap.className = 'visibility-toggle';

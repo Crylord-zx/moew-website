@@ -268,7 +268,8 @@ async function handleApi(req, res, pathname) {
   // GET /api/public/templates -> gallery cards
   if (req.method === 'GET' && pathname === '/api/public/templates') {
     const list = listTemplateSlugs().map((slug) => ({ slug, title: titleFromSlug(slug) }));
-    return sendJson(res, 200, [...list, ...LOVEAREA_TEMPLATES]);
+    const visibleLove = LOVEAREA_TEMPLATES.filter((t) => isEnabled(t.slug));
+    return sendJson(res, 200, [...list, ...visibleLove]);
   }
 
   // GET /api/public/templates/:slug -> default content to prefill the form
@@ -332,7 +333,7 @@ async function handleApi(req, res, pathname) {
   const loveSchemaMatch = pathname.match(/^\/api\/public\/lovearea-schema\/([^/]+)$/);
   if (req.method === 'GET' && loveSchemaMatch) {
     const entry = LOVEAREA_SCHEMAS[loveSchemaMatch[1]];
-    if (!entry) return sendJson(res, 404, { error: 'unknown template' });
+    if (!entry || !isEnabled(loveSchemaMatch[1])) return sendJson(res, 404, { error: 'unknown template' });
     return sendJson(res, 200, entry);
   }
 
@@ -616,7 +617,7 @@ function handleSiteRequest(req, res) {
   }
 }
 
-module.exports = { handleSiteRequest, cleanupStalePreviews };
+module.exports = { handleSiteRequest, cleanupStalePreviews, LOVEAREA_ROOT_FILES };
 
 // Only actually start listening when run directly (`node site-server.js`).
 // When required by server.js (the merged single-deployment entry point),

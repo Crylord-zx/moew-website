@@ -19,6 +19,14 @@ const templatesDir = path.join(root, 'templates');
 const cdnDir = path.join(root, 'cdn', 'template-seeds');
 const backupsDir = path.join(root, 'admin-backups');
 const authFile = path.join(root, 'admin-auth.json');
+// The 27 lovearea.in templates use a completely different editing
+// mechanism (a patched bundle + per-visitor override data — see
+// site-server.js / customize-love.html), not the snapshot-based
+// extractSnapshot/writeSnapshot flow the rest of this file uses. There's
+// no "master copy" to edit here the way there is for the templates/*.html
+// ones — admin can only see them, toggle visibility, and customize a page
+// the same way a visitor would.
+const LOVEAREA_SCHEMAS = JSON.parse(fs.readFileSync(path.join(root, 'lovearea-schemas.json'), 'utf8'));
 const port = process.env.PORT || 8899;
 // Now that login is required, it's safe to listen on all interfaces by
 // default — set HOST=127.0.0.1 instead if you'd rather keep using the
@@ -227,7 +235,14 @@ async function handleApi(req, res, pathname) {
         return { slug, title: slug, enabled: isEnabled(slug), error: e.message };
       }
     });
-    return sendJson(res, 200, list);
+    const loveList = Object.entries(LOVEAREA_SCHEMAS).map(([slug, entry]) => ({
+      slug,
+      title: slug.replace(/^love-/, '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+      enabled: isEnabled(slug),
+      isLovearea: true,
+      previewUrl: `/template/${entry.category}/${entry.design}?preview=true`,
+    }));
+    return sendJson(res, 200, [...list, ...loveList]);
   }
 
   // GET /api/creations -> every shareable link anyone has generated on
@@ -241,8 +256,10 @@ async function handleApi(req, res, pathname) {
   if (req.method === 'POST' && visibilityMatch) {
     try {
       const slug = visibilityMatch[1];
-      templateFile(slug); // throws if slug is invalid — also confirms it exists below
-      if (!fs.existsSync(templateFile(slug))) throw new Error('template not found');
+      if (!LOVEAREA_SCHEMAS[slug]) {
+        templateFile(slug); // throws if slug is invalid — also confirms it exists below
+        if (!fs.existsSync(templateFile(slug))) throw new Error('template not found');
+      }
       const { enabled } = await readJsonBody(req);
       setEnabled(slug, !!enabled);
       return sendJson(res, 200, { ok: true, enabled: !!enabled });
