@@ -1,0 +1,49 @@
+// Only the actual homepage should ever suggest leaving the in-app browser —
+// a visitor opening a template link (customize page, or someone's shared
+// /g/<id> page) is already exactly where they want to be, so this never
+// runs there. Detection matches the same logic the lovearea bundle used to
+// run on every one of its own pages, now scoped to just this one place.
+(function () {
+  var ua = navigator.userAgent || navigator.vendor || window.opera || '';
+  var isInAppBrowser = ua.indexOf('Instagram') > -1 || ua.indexOf('FBAN') > -1 || ua.indexOf('FBAV') > -1 || ua.indexOf('Messenger') > -1;
+  if (!isInAppBrowser) return;
+
+  var overlay = document.getElementById('browserPromptOverlay');
+  if (!overlay) return;
+
+  setTimeout(function () {
+    overlay.hidden = false;
+  }, 1000);
+
+  function currentUrlNoProtocol() {
+    return location.href.replace(/^https?:\/\//, '');
+  }
+
+  document.getElementById('browserPromptChrome').addEventListener('click', function () {
+    if (/Android/i.test(ua)) {
+      location.href = 'intent://' + currentUrlNoProtocol() + '#Intent;scheme=https;package=com.android.chrome;end';
+    } else {
+      location.href = 'googlechrome://' + currentUrlNoProtocol();
+    }
+  });
+
+  document.getElementById('browserPromptSafari').addEventListener('click', function () {
+    if (/iPhone|iPad|iPod/i.test(ua)) {
+      alert("Tap the (⋯) menu at the top right and select 'Open in Safari'.");
+    } else {
+      window.open(location.href, '_blank');
+    }
+  });
+
+  document.getElementById('browserPromptCopy').addEventListener('click', function () {
+    navigator.clipboard.writeText(location.href).catch(function () {});
+    var btn = document.getElementById('browserPromptCopy');
+    var original = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    setTimeout(function () { btn.textContent = original; }, 1500);
+  });
+
+  document.getElementById('browserPromptClose').addEventListener('click', function () {
+    overlay.hidden = true;
+  });
+})();

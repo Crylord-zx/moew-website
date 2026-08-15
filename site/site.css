@@ -381,3 +381,26 @@ footer { text-align: center; padding: 30px; color: var(--color-muted); font-size
     right: 10px;
   }
 }
+
+/* ============== Instagram/Facebook in-app browser prompt ============== */
+#browserPromptOverlay {
+  position: fixed; inset: 0; background: rgba(36, 28, 51, 0.55);
+  display: flex; align-items: center; justify-content: center; z-index: 60;
+  padding: 16px;
+  animation: overlayFadeIn 0.25s ease both;
+}
+#browserPromptOverlay[hidden] { display: none; }
+#browserPromptCard {
+  background: #fff; border-radius: 24px; padding: 30px; max-width: 400px; width: 100%;
+  text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+  animation: cardPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  display: flex; flex-direction: column; gap: 10px;
+}
+#browserPromptCard .eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--color-pink); margin: 0;
+}
+#browserPromptCard h2 { margin: 0 0 4px; font-size: 24px; }
+#browserPromptCard .hint { color: var(--color-muted); font-size: 13px; margin: 0 0 8px; }
+#browserPromptButtons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+#browserPromptButtons .btn { margin-top: 0; }
