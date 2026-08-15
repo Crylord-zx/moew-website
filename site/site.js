@@ -6,19 +6,24 @@ async function loadGallery() {
     const list = await res.json();
 
     galleryEl.innerHTML = '';
-    list.forEach(({ slug, title }, i) => {
+    list.forEach(({ slug, title, editable, previewUrl }, i) => {
       const card = document.createElement('div');
       card.className = 'card fade-in';
       card.style.animationDelay = `${Math.min(i * 30, 300)}ms`;
+      const previewHref = previewUrl || `/templates/${encodeURIComponent(slug)}.html`;
+      // Not every template is admin-editable yet (lovearea.in ones are
+      // preview-only for now — see LOVEAREA_TEMPLATES in site-server.js).
+      // Those get just a full-width Preview link, no Customize button.
+      const actions = editable === false
+        ? `<a class="btn primary small" href="${previewHref}" target="_blank" rel="noopener">👀 Preview</a>`
+        : `<a class="btn secondary small" href="${previewHref}" target="_blank" rel="noopener">👀 Preview</a>
+           <a class="btn primary small" href="/site/customize.html?slug=${encodeURIComponent(slug)}">✏️ Customize</a>`;
       card.innerHTML = `
         <img class="thumb" src="/admin-thumbs/${encodeURIComponent(slug)}.png" alt=""
              onerror="this.style.background='#f1ecfb'" />
         <div class="card-body">
           <h3>${escapeHtml(title)}</h3>
-          <div class="card-actions">
-            <a class="btn secondary small" href="/templates/${encodeURIComponent(slug)}.html" target="_blank" rel="noopener">👀 Preview</a>
-            <a class="btn primary small" href="/site/customize.html?slug=${encodeURIComponent(slug)}">✏️ Customize</a>
-          </div>
+          <div class="card-actions">${actions}</div>
         </div>
       `;
       galleryEl.appendChild(card);

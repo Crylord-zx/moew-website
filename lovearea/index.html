@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/jpeg" href="/logo.png" />
+
+  <title>Meow Webpages</title>
+  <meta name="description"
+    content="Create personalized romantic pages for birthdays, anniversaries, Valentine's Day, and every moment that deserves to be celebrated with love." />
+
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet" />
+  <script type="module" crossorigin src="/assets/index-DgLINzUQ.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-xEid6EGe.css">
+  <style>
+    /* Hides this source app's own login/checkout upsell chrome — these
+       templates are being served as part of Meow Webpages, not sold
+       separately, so "Login to Edit", the WhatsApp help bubble, and the
+       "Preview any design free / No account needed" footer bar don't
+       apply here. CSS alone can't match by text content (no :contains()
+       selector), so this pairs with the script below, which finds these
+       specific elements by their actual text/href and hides them — with
+       a MutationObserver keeping them hidden through this app's own
+       client-side re-renders, the same self-healing approach already
+       used for this site's Instagram credit badge. */
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script>
+    (function () {
+      function hideChrome() {
+        // "Login to Edit" — top-right button; hide only this one button,
+        // not its sibling flex row (which may also hold a genuinely
+        // useful music on/off toggle for this template).
+        document.querySelectorAll('button, a').forEach(function (el) {
+          var t = (el.textContent || '').trim();
+          if (t === 'Login to Edit') el.style.display = 'none';
+        });
+
+        // WhatsApp "Help" bubble and the adjacent "Preview any design
+        // free / No account needed" text share one footer bar — hide
+        // that whole bar.
+        var help = document.querySelector('a[href*="wa.me"]');
+        if (help) {
+          var bar = help.closest('div');
+          if (bar) bar.style.display = 'none';
+          else help.style.display = 'none';
+        }
+      }
+      hideChrome();
+      document.addEventListener('DOMContentLoaded', hideChrome);
+      new MutationObserver(hideChrome).observe(document.documentElement, { childList: true, subtree: true });
+    })();
+  </script>
+</body>
+
+</html>

@@ -37,7 +37,7 @@ const mime = {
   '.woff2': 'font/woff2', '.png': 'image/png', '.webp': 'image/webp',
   '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.svg': 'image/svg+xml',
   '.json': 'application/json', '.ico': 'image/x-icon', '.gif': 'image/gif',
-  '.mp3': 'audio/mpeg',
+  '.mp3': 'audio/mpeg', '.mp4': 'video/mp4',
 };
 const COMPRESSIBLE = new Set(['.html', '.js', '.css', '.json', '.svg']);
 
@@ -45,20 +45,40 @@ const COMPRESSIBLE = new Set(['.html', '.js', '.css', '.json', '.svg']);
 // (admin.html, admin.js, admin.css, admin-server.js, admin-lib.js,
 // admin-backups/) is simply not in this list, so it 404s even if someone
 // guesses the URL. admin-thumbs is fine to expose — it's just cover images.
-const PUBLIC_PREFIXES = ['/templates/', '/_next/', '/cdn/', '/admin-thumbs/', '/site/', '/g/'];
+// "/assets/" and "/template/" (singular) belong to the lovearea.in
+// templates (see below) — a client-rendered app that was built assuming
+// it's deployed at domain root, so its own JS bundle references these
+// exact absolute paths; they can't be moved under a namespaced prefix
+// without patching the (large, minified) bundle itself.
+const PUBLIC_PREFIXES = ['/templates/', '/_next/', '/cdn/', '/admin-thumbs/', '/site/', '/g/', '/assets/', '/template/'];
 
 function isPubliclyServable(pathname) {
   if (pathname === '/') return true;
+  if (LOVEAREA_ROOT_FILES.has(pathname)) return true;
   return PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
 }
+
+// The lovearea.in bundle also references a handful of loose files
+// (background music + its favicon) at the absolute site root, same
+// reason as above — its router/audio-player code has these exact
+// filenames hardcoded. An explicit whitelist (rather than serving
+// anything at root) keeps this from accidentally exposing arbitrary
+// files if something else ever lands in that folder.
+const LOVEAREA_ROOT_FILES = new Set([
+  '/logo.png',
+  '/Preet Re.mp3', '/I Think They Call This Love.mp3', '/I love you .mp3', '/Perfect.mp3',
+  '/SangRkhna.mp3', '/Tera Hone Laga.mp3', '/Tu Jo Mila.mp3', '/Until I Found You.mp3',
+  '/a_thousand_year.mp3', '/balam_pichkari.mp3', '/happy-birthday.mp3', '/merenaamtu.mp3',
+  '/romantic.mp3', '/tumho.mp3', '/tummile.mp3',
+]);
 
 // Cache policy by path: content-hashed Next.js chunks never change under
 // the same filename, so they're safe to cache forever. Template assets
 // change rarely. HTML/generated pages and API responses should never be
 // stale for a visitor, so they're not cached at all.
 function cacheControlFor(urlPath, ext) {
-  if (urlPath.startsWith('/_next/static/')) return 'public, max-age=31536000, immutable';
-  if (urlPath.startsWith('/cdn/') || urlPath.startsWith('/admin-thumbs/')) return 'public, max-age=86400';
+  if (urlPath.startsWith('/_next/static/') || urlPath.startsWith('/lovearea/assets/')) return 'public, max-age=31536000, immutable';
+  if (urlPath.startsWith('/cdn/') || urlPath.startsWith('/admin-thumbs/') || urlPath.startsWith('/lovearea/root-files/')) return 'public, max-age=86400';
   if (ext === '.html') return 'no-cache';
   return 'public, max-age=3600';
 }
@@ -122,6 +142,48 @@ function templateFile(slug) {
   if (!/^[a-z0-9-]+$/i.test(slug)) throw new Error('invalid slug');
   return path.join(templatesDir, slug + '.html');
 }
+
+// Templates sourced from lovearea.in — a client-rendered React app, not
+// the Next.js flight-payload format the rest of this project's editing
+// pipeline (admin-lib.js) understands. These are preview-only for now:
+// no Customize button, no admin-panel text/photo editing, just a working
+// Preview link into the app's own client-side router. slug is prefixed
+// "love-" to keep it visually distinct from the Next.js template slugs
+// and to guarantee no collision with anything already in templates/.
+const LOVEAREA_TEMPLATES = [
+  { category: 'birthday', design: 'dreamy-scrapbook', title: 'Dreamy Scrapbook (Birthday)' },
+  { category: 'birthday', design: 'dreamy-cloudscape', title: 'Dreamy Cloudscape (Birthday)' },
+  { category: 'birthday', design: 'birthday_template', title: 'Birthday Template' },
+  { category: 'birthday', design: 'premium-surprise', title: 'Premium Surprise (Birthday)' },
+  { category: 'birthday', design: 'midnight-romance', title: 'Midnight Romance (Birthday)' },
+  { category: 'birthday', design: 'bestie_birthday', title: "Bestie's Birthday" },
+  { category: 'birthday', design: 'sibling-birthday-quest', title: 'Sibling Birthday Quest' },
+  { category: 'birthday', design: 'birthday-love-diary', title: 'Birthday Love Diary' },
+  { category: 'birthday', design: 'disco-bestie', title: 'Disco Bestie (Birthday)' },
+  { category: 'birthday', design: 'party-bash', title: 'Party Bash (Birthday)' },
+  { category: 'valentine', design: 'ultimate_valentine', title: "Ultimate Valentine's" },
+  { category: 'valentine', design: 'cupid', title: 'Cupid (Valentine)' },
+  { category: 'valentine', design: 'love_adventure', title: 'Love Adventure (Valentine)' },
+  { category: 'valentine', design: 'enchanted-valentine', title: 'Enchanted Valentine' },
+  { category: 'valentine', design: 'artisan-affection', title: 'Artisan Affection (Valentine)' },
+  { category: 'anniversary', design: 'first-anniversary', title: 'First Anniversary' },
+  { category: 'anniversary', design: 'eternal-anniversary', title: 'Eternal Anniversary' },
+  { category: 'anniversary', design: 'celestial-love', title: 'Celestial Love (Anniversary)' },
+  { category: 'apology', design: 'ultimate-apology', title: 'Ultimate Apology' },
+  { category: 'apology', design: 'cute-sorry', title: 'Cute Sorry (Apology)' },
+  { category: 'holi', design: 'festive-joy', title: 'Festive Joy (Holi)' },
+  { category: 'holi', design: 'color-my-heart', title: 'Color My Heart (Holi)' },
+  { category: 'cheerup', design: 'mood-cheerup', title: 'Cheer Up' },
+  { category: 'confession', design: 'proposal-surprise', title: 'Proposal Surprise (Confession)' },
+  { category: 'crushday', design: 'crush-day', title: 'Crush Day' },
+  { category: 'date', design: 'cute-date-asking', title: 'Cute Date Asking' },
+  { category: 'girlfriendday', design: 'perfect-girlfriend', title: "Perfect Girlfriend's Day" },
+].map((t) => ({
+  slug: `love-${t.category}-${t.design}`.toLowerCase().replace(/_/g, '-'),
+  title: t.title,
+  editable: false,
+  previewUrl: `/template/${t.category}/${t.design}?preview=true`,
+}));
 
 function newId() {
   return crypto.randomBytes(6).toString('base64url');
@@ -196,7 +258,7 @@ async function handleApi(req, res, pathname) {
   // GET /api/public/templates -> gallery cards
   if (req.method === 'GET' && pathname === '/api/public/templates') {
     const list = listTemplateSlugs().map((slug) => ({ slug, title: titleFromSlug(slug) }));
-    return sendJson(res, 200, list);
+    return sendJson(res, 200, [...list, ...LOVEAREA_TEMPLATES]);
   }
 
   // GET /api/public/templates/:slug -> default content to prefill the form
@@ -412,8 +474,16 @@ function handleSiteRequest(req, res) {
 
     // pretty shareable URL: /g/<id> -> site/generated/<id>.html
     const gMatch = pathname.match(/^\/g\/([A-Za-z0-9_-]+)$/);
+    // lovearea.in templates: /assets/* and the loose root files (music,
+    // favicon) map straight into lovearea/; any /template/<category>/<slug>
+    // path is a client-side route the bundled React app resolves itself,
+    // so every one of them gets the same index.html shell (SPA fallback)
+    // rather than a matching file on disk.
     const urlPath = pathname === '/' ? '/site/index.html'
       : gMatch ? `/site/generated/${gMatch[1]}.html`
+      : pathname.startsWith('/assets/') ? `/lovearea${pathname}`
+      : LOVEAREA_ROOT_FILES.has(pathname) ? `/lovearea/root-files${pathname}`
+      : pathname.startsWith('/template/') ? '/lovearea/index.html'
       : pathname;
 
     serveStatic(req, res, urlPath);
