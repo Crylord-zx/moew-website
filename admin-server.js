@@ -27,7 +27,7 @@ const authFile = path.join(root, 'admin-auth.json');
 // ones — admin can only see them, toggle visibility, and customize a page
 // the same way a visitor would.
 const LOVEAREA_SCHEMAS = JSON.parse(fs.readFileSync(path.join(root, 'lovearea-schemas.json'), 'utf8'));
-const { setMaster: setLoveMaster } = require('./lovearea-master');
+const { getMaster: getLoveMaster, setMaster: setLoveMaster } = require('./lovearea-master');
 const port = process.env.PORT || 8899;
 // Now that login is required, it's safe to listen on all interfaces by
 // default — set HOST=127.0.0.1 instead if you'd rather keep using the
@@ -241,6 +241,7 @@ async function handleApi(req, res, pathname) {
       title: slug.replace(/^love-/, '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
       enabled: isEnabled(slug),
       isLovearea: true,
+      hasMaster: !!getLoveMaster(slug),
       previewUrl: `/template/${entry.category}/${entry.design}?preview=true`,
     }));
     return sendJson(res, 200, [...list, ...loveList]);
@@ -485,7 +486,14 @@ function handleAdminRequest(req, res) {
   fs.readFile(filePath, (err, data) => {
     if (err) { res.writeHead(404); res.end('Not found: ' + urlPath); return; }
     const ext = path.extname(filePath);
-    res.writeHead(200, { 'Content-Type': mime[ext] || 'application/octet-stream' });
+    const headers = { 'Content-Type': mime[ext] || 'application/octet-stream' };
+    // The admin panel's own UI files (admin.html/admin.js/admin.css)
+    // change as this project is actively worked on and have no
+    // cache-busting filename hash — without this, a browser can keep
+    // running stale JS well after a fix has shipped (this exact bug hit
+    // the public site's site.js earlier and got the same fix there).
+    if (/^\/admin\.(html|js|css)$/.test(urlPath)) headers['Cache-Control'] = 'no-cache';
+    res.writeHead(200, headers);
     res.end(data);
   });
 }

@@ -67,20 +67,22 @@ async function loadTemplateList() {
     if (!res.ok) throw new Error(`API returned ${res.status} — are you running admin-server.js (not server.js)?`);
     const list = await res.json();
     templateListEl.innerHTML = '';
-    list.forEach(({ slug, title, enabled, isLovearea, previewUrl }) => {
+    list.forEach(({ slug, title, enabled, isLovearea, hasMaster, previewUrl }) => {
       const li = document.createElement('li');
       li.className = 'template-row';
 
       const btn = document.createElement('button');
       if (!enabled) btn.classList.add('disabled-template');
-      // lovearea templates have no master copy to edit here — they use a
-      // per-visitor override system (see customize-love.html), so the
-      // subtitle and click action both point there instead of the
-      // snapshot editor the other templates use.
+      // lovearea templates have no template file to edit here — their
+      // master copy is a saved data snapshot instead (see
+      // customize-love.html's admin=1 mode), so the subtitle reflects
+      // whether one's been saved yet rather than always showing "no
+      // master copy" regardless of actual state.
+      const loveSubtitle = hasMaster ? 'master copy set — click to edit' : 'no master copy yet — click to set one';
       btn.innerHTML = `
         <img class="thumb" src="/admin-thumbs/${encodeURIComponent(slug)}.png" alt="" loading="lazy"
              onerror="this.style.visibility='hidden'" />
-        <span class="label">${escapeHtml(title)}<span class="slug">${isLovearea ? 'no master copy — customize only' : escapeHtml(slug) + '.html'}</span></span>
+        <span class="label">${escapeHtml(title)}<span class="slug">${isLovearea ? loveSubtitle : escapeHtml(slug) + '.html'}</span></span>
       `;
       if (isLovearea) {
         btn.addEventListener('click', () => window.open(`/site/customize-love.html?slug=${encodeURIComponent(slug)}&admin=1`, '_blank'));
