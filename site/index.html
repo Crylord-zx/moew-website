@@ -32,15 +32,51 @@
 
   <div id="browserPromptOverlay" hidden>
     <div id="browserPromptCard">
+      <div id="browserPromptStripe"></div>
       <p class="eyebrow">Better Experience Available</p>
       <h2>Recommended Browsers</h2>
       <p class="hint">Instagram's built-in browser has limitations. For smoother animations and full features, open this in a dedicated browser.</p>
       <div id="browserPromptButtons">
-        <button id="browserPromptChrome" class="btn secondary" type="button">Chrome</button>
-        <button id="browserPromptSafari" class="btn secondary" type="button">Safari</button>
+        <button id="browserPromptChrome" class="icon-btn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5.5C13.24 5.5 14.41 5.86 15.39 6.48L19.38 2.49C17.39 0.94 14.86 0 12 0C7.46 0 3.54 2.37 1.34 5.92L5.87 11.23C6.35 8.1 9.01 5.5 12 5.5Z" fill="#EA4335"/>
+            <path d="M23.49 9.38L18.96 14.69C18.35 17.5 15.68 19.5 12.5 19.5C11.53 19.5 10.61 19.28 9.79 18.9L5.8 22.89C7.62 23.59 9.61 24 11.66 24C16.89 24 21.46 20.89 23.49 16.32V9.38H23.49Z" fill="#34A853"/>
+            <path d="M11.66 23.44V16.5C10.42 16.5 9.25 16.14 8.27 15.52L4.28 19.51C6.27 21.06 8.8 22 11.66 22V23.44Z" fill="#FBBC05"/>
+            <path d="M5.87 11.23L1.34 5.92C0.49 7.74 0 9.73 0 11.78C0 17.01 3.11 21.58 7.68 23.61L11.67 19.62C8.65 19.14 6.35 16.51 5.87 13.4V11.23H5.87Z" fill="#FBBC05"/>
+            <path d="M12 16.5C14.4853 16.5 16.5 14.4853 16.5 12C16.5 9.51472 14.4853 7.5 12 7.5C9.51472 7.5 7.5 9.51472 7.5 12C7.5 14.4853 9.51472 16.5 12 16.5Z" fill="#4285F4"/>
+          </svg>
+          <span>Chrome</span>
+        </button>
+        <button id="browserPromptSafari" class="icon-btn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="11" fill="url(#safari-gradient)" stroke="#D1D1D1" stroke-width="0.5"/>
+            <defs>
+              <linearGradient id="safari-gradient" x1="12" y1="1" x2="12" y2="23" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#1C75BC"/>
+                <stop offset="1" stop-color="#00AEEF"/>
+              </linearGradient>
+            </defs>
+            <path d="M12 4V20M4 12H20" stroke="white" stroke-width="0.5" stroke-opacity="0.3"/>
+            <path d="M12 12L15 6L12 12L9 18L12 12Z" fill="#EA4335" stroke="#EA4335" stroke-width="0.5" stroke-linejoin="round"/>
+            <path d="M12 12L9 6L12 12L15 18L12 12Z" fill="white" stroke="white" stroke-width="0.5" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="1" fill="#1C75BC"/>
+          </svg>
+          <span>Safari</span>
+        </button>
       </div>
-      <button id="browserPromptCopy" class="btn secondary" type="button" style="width:100%">Copy link</button>
-      <button id="browserPromptClose" class="btn primary" type="button" style="width:100%">Continue here</button>
+      <button id="browserPromptCopy" class="icon-btn-row" type="button">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        <span>Copy link</span>
+      </button>
+      <button id="browserPromptClose" class="icon-btn-row primary" type="button">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+        <span>Continue here</span>
+      </button>
     </div>
   </div>
 

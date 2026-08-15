@@ -43,10 +43,10 @@
 
   document.getElementById('browserPromptCopy').addEventListener('click', function () {
     navigator.clipboard.writeText(location.href).catch(function () {});
-    var btn = document.getElementById('browserPromptCopy');
-    var original = btn.textContent;
-    btn.textContent = 'Copied ✓';
-    setTimeout(function () { btn.textContent = original; }, 1500);
+    var label = document.querySelector('#browserPromptCopy span');
+    var original = label.textContent;
+    label.textContent = 'Copied ✓';
+    setTimeout(function () { label.textContent = original; }, 1500);
   });
 
   document.getElementById('browserPromptClose').addEventListener('click', function () {

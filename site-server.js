@@ -67,11 +67,11 @@ function isPubliclyServable(pathname) {
 // anything at root) keeps this from accidentally exposing arbitrary
 // files if something else ever lands in that folder.
 const LOVEAREA_ROOT_FILES = new Set([
-  '/logo.png',
+  '/logo.png', '/logo.webp', '/heart-icon.webp',
   '/Preet Re.mp3', '/I Think They Call This Love.mp3', '/I love you .mp3', '/Perfect.mp3',
   '/SangRkhna.mp3', '/Tera Hone Laga.mp3', '/Tu Jo Mila.mp3', '/Until I Found You.mp3',
   '/a_thousand_year.mp3', '/balam_pichkari.mp3', '/happy-birthday.mp3', '/merenaamtu.mp3',
-  '/romantic.mp3', '/tumho.mp3', '/tummile.mp3',
+  '/romantic.mp3', '/tumho.mp3', '/tummile.mp3', '/AajSajeya.mp3',
 ]);
 
 // Cache policy by path: content-hashed Next.js chunks never change under
