@@ -613,7 +613,10 @@ function handleSiteRequest(req, res) {
     // width/quality. Only ever reached for that one imported template
     // (its own asset paths were namespaced under /imported/... during
     // integration, so `url` always resolves inside its own folder).
-    if (pathname === '/_next/image') {
+    // The template's own next.config sets images.path to its namespaced
+    // "/imported/<slug>/_next/image", not the framework's default root
+    // "/_next/image", so both forms need to match here.
+    if (pathname === '/_next/image' || pathname === '/imported/second-birthday-version/_next/image') {
       const orig = new URL(req.url, 'http://x').searchParams.get('url') || '';
       const filePath = path.join(root, orig);
       if (filePath.startsWith(root) && fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
