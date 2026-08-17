@@ -32,6 +32,28 @@ const mailboxViewEl = document.getElementById('mailboxView');
 const mailboxListEl = document.getElementById('mailboxList');
 const mailboxCountEl = document.getElementById('mailboxCount');
 const refreshMailboxBtn = document.getElementById('refreshMailboxBtn');
+const templateSearchInput = document.getElementById('templateSearchInput');
+const categoryFilterSelect = document.getElementById('categoryFilterSelect');
+const categoriesBtn = document.getElementById('categoriesBtn');
+const categoriesViewEl = document.getElementById('categoriesView');
+const categoriesBoardEl = document.getElementById('categoriesBoard');
+const refreshCategoriesBtn = document.getElementById('refreshCategoriesBtn');
+const categorySettingsListEl = document.getElementById('categorySettingsList');
+const newCategoryEmojiInput = document.getElementById('newCategoryEmoji');
+const newCategoryLabelInput = document.getElementById('newCategoryLabel');
+const addCategoryBtn = document.getElementById('addCategoryBtn');
+
+let CATEGORY_LIST = [];
+let lastTemplateList = [];
+
+async function loadCategoryList() {
+  try {
+    const res = await fetch('/api/categories');
+    CATEGORY_LIST = await res.json();
+    categoryFilterSelect.innerHTML = '<option value="">All categories</option>' +
+      CATEGORY_LIST.map((c) => `<option value="${c.key}">${c.emoji} ${escapeHtml(c.label)}</option>`).join('');
+  } catch {}
+}
 
 // small click-ripple feedback on any .btn, including ones added later
 document.addEventListener('click', (e) => {
@@ -88,11 +110,34 @@ async function loadTemplateList() {
   try {
     const res = await fetch('/api/templates');
     if (!res.ok) throw new Error(`API returned ${res.status} — are you running admin-server.js (not server.js)?`);
-    const list = await res.json();
+    lastTemplateList = await res.json();
+    renderTemplateList();
+  } catch (e) {
+    templateListEl.innerHTML = `<li class="muted" style="color:#dc2626">Couldn't load templates: ${escapeHtml(e.message)}</li>`;
+  }
+}
+
+function renderTemplateList() {
+  const q = (templateSearchInput.value || '').trim().toLowerCase();
+  const catFilter = categoryFilterSelect.value;
+  const list = lastTemplateList.filter((t) => {
+    if (catFilter && t.category !== catFilter) return false;
+    if (q && !t.title.toLowerCase().includes(q) && !t.slug.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  try {
     templateListEl.innerHTML = '';
-    list.forEach(({ slug, title, enabled, isLovearea, hasMaster, previewUrl }) => {
+    if (list.length === 0) {
+      templateListEl.innerHTML = '<li class="muted">No templates match.</li>';
+      return;
+    }
+    list.forEach(({ slug, title, enabled, isLovearea, isImported, hasMaster, previewUrl, category, order, featured }) => {
       const li = document.createElement('li');
-      li.className = 'template-row';
+      li.className = 'template-row-wrap';
+
+      const row = document.createElement('div');
+      row.className = 'template-row';
 
       const btn = document.createElement('button');
       if (!enabled) btn.classList.add('disabled-template');
@@ -102,12 +147,20 @@ async function loadTemplateList() {
       // whether one's been saved yet rather than always showing "no
       // master copy" regardless of actual state.
       const loveSubtitle = hasMaster ? 'master copy set — click to edit' : 'no master copy yet — click to set one';
+      // imported templates (fetched from Youware/Lovable/etc.) have no
+      // snapshot pipeline at all yet — preview + visibility/category only,
+      // no click-to-edit, so the subtitle says so instead of implying one
+      const subtitle = isImported ? 'imported — preview only, not yet editable' : isLovearea ? loveSubtitle : escapeHtml(slug) + '.html';
       btn.innerHTML = `
         <img class="thumb" src="/admin-thumbs/${encodeURIComponent(slug)}.png" alt="" loading="lazy"
              onerror="this.style.visibility='hidden'" />
-        <span class="label">${escapeHtml(title)}<span class="slug">${isLovearea ? loveSubtitle : escapeHtml(slug) + '.html'}</span></span>
+        <span class="label">${escapeHtml(title)}<span class="slug">${subtitle}</span></span>
       `;
-      if (isLovearea) {
+      if (isImported) {
+        btn.classList.add('no-edit');
+        btn.title = 'Preview-only template — open it via "View live" on the public site';
+        btn.addEventListener('click', () => window.open(previewUrl, '_blank', 'noopener'));
+      } else if (isLovearea) {
         btn.addEventListener('click', () => selectLoveTemplate(slug, btn));
       } else {
         btn.addEventListener('click', () => selectTemplate(slug, btn));
@@ -136,8 +189,10 @@ async function loadTemplateList() {
       toggleWrap.appendChild(toggleInput);
       toggleWrap.appendChild(slider);
 
-      li.appendChild(btn);
-      li.appendChild(toggleWrap);
+      row.appendChild(btn);
+      row.appendChild(toggleWrap);
+
+      li.appendChild(row);
       templateListEl.appendChild(li);
     });
   } catch (e) {
@@ -148,6 +203,25 @@ async function loadTemplateList() {
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
+
+async function saveCategoryMeta(slug, patch) {
+  try {
+    await fetch(`/api/templates/${encodeURIComponent(slug)}/category`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patch),
+    });
+    const entry = lastTemplateList.find((t) => t.slug === slug);
+    if (entry) Object.assign(entry, patch);
+  } catch {}
+}
+
+let searchDebounce;
+templateSearchInput.addEventListener('input', () => {
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(renderTemplateList, 150);
+});
+categoryFilterSelect.addEventListener('change', renderTemplateList);
 
 async function selectTemplate(slug, btnEl) {
   document.querySelectorAll('#templateList button').forEach((b) => b.classList.remove('active'));
@@ -163,6 +237,9 @@ async function selectTemplate(slug, btnEl) {
   currentSnapshot = await res.json();
 
   mailboxViewEl.hidden = true;
+  categoriesViewEl.hidden = true;
+  mailboxBtn.classList.remove('nav-active');
+  categoriesBtn.classList.remove('nav-active');
   emptyEl.hidden = true;
   editorEl.hidden = false;
   saveStatusEl.textContent = '';
@@ -195,6 +272,9 @@ async function selectLoveTemplate(slug, btnEl) {
   loveCategoryDesign = { category: out.category, design: out.design };
 
   mailboxViewEl.hidden = true;
+  categoriesViewEl.hidden = true;
+  mailboxBtn.classList.remove('nav-active');
+  categoriesBtn.classList.remove('nav-active');
   emptyEl.hidden = true;
   editorEl.hidden = false;
   saveStatusEl.textContent = '';
@@ -522,12 +602,399 @@ async function loadMailbox() {
 
 mailboxBtn.addEventListener('click', () => {
   document.querySelectorAll('#templateList button').forEach((b) => b.classList.remove('active'));
+  mailboxBtn.classList.add('nav-active');
+  categoriesBtn.classList.remove('nav-active');
   emptyEl.hidden = true;
   editorEl.hidden = true;
+  categoriesViewEl.hidden = true;
   mailboxViewEl.hidden = false;
   loadMailbox();
 });
 refreshMailboxBtn.addEventListener('click', loadMailbox);
+
+categoriesBtn.addEventListener('click', () => {
+  document.querySelectorAll('#templateList button').forEach((b) => b.classList.remove('active'));
+  categoriesBtn.classList.add('nav-active');
+  mailboxBtn.classList.remove('nav-active');
+  emptyEl.hidden = true;
+  editorEl.hidden = true;
+  mailboxViewEl.hidden = true;
+  categoriesViewEl.hidden = false;
+  loadCategoriesBoard();
+});
+refreshCategoriesBtn.addEventListener('click', loadCategoriesBoard);
+
+let categoriesBoardList = [];
+
+async function loadCategoriesBoard() {
+  categoriesBoardEl.innerHTML = '<div class="loading-row"><span class="spinner"></span> Loading…</div>';
+  try {
+    await loadCategoryList(); // always fresh here — pill renames/reorders must show immediately
+    renderCategorySettings();
+    const res = await fetch('/api/templates');
+    if (!res.ok) throw new Error(`API returned ${res.status}`);
+    categoriesBoardList = await res.json();
+    renderCategoriesBoard();
+  } catch (e) {
+    categoriesBoardEl.innerHTML = `<p class="muted" style="color:#dc2626">Couldn't load: ${escapeHtml(e.message)}</p>`;
+  }
+}
+
+// Category pill settings: rename label/emoji, and reorder the pills
+// themselves (separate from reordering templates WITHIN a category, below).
+function renderCategorySettings() {
+  categorySettingsListEl.innerHTML = '';
+  const sorted = [...CATEGORY_LIST].sort((a, b) => a.order - b.order);
+
+  sorted.forEach((cat, i) => {
+    const row = document.createElement('div');
+    row.className = 'cat-def-row';
+
+    const orderButtons = document.createElement('div');
+    orderButtons.className = 'order-buttons';
+    const upBtn = document.createElement('button');
+    upBtn.type = 'button'; upBtn.innerHTML = '<svg><use href="#i-chevron-up"/></svg>'; upBtn.title = 'Move this pill earlier';
+    upBtn.disabled = i === 0;
+    upBtn.addEventListener('click', () => moveCategoryDef(sorted, i, -1));
+    const downBtn = document.createElement('button');
+    downBtn.type = 'button'; downBtn.innerHTML = '<svg><use href="#i-chevron-down"/></svg>'; downBtn.title = 'Move this pill later';
+    downBtn.disabled = i === sorted.length - 1;
+    downBtn.addEventListener('click', () => moveCategoryDef(sorted, i, 1));
+    orderButtons.appendChild(upBtn);
+    orderButtons.appendChild(downBtn);
+    row.appendChild(orderButtons);
+
+    const keyLabel = document.createElement('span');
+    keyLabel.className = 'cat-def-key';
+    keyLabel.textContent = cat.key;
+    row.appendChild(keyLabel);
+
+    const emojiInput = document.createElement('input');
+    emojiInput.className = 'cat-def-emoji';
+    emojiInput.value = cat.emoji;
+    row.appendChild(emojiInput);
+
+    const labelInput = document.createElement('input');
+    labelInput.className = 'cat-def-label';
+    labelInput.value = cat.label;
+    row.appendChild(labelInput);
+
+    const markDirty = () => row.classList.add('dirty');
+    emojiInput.addEventListener('input', markDirty);
+    labelInput.addEventListener('input', markDirty);
+
+    const savedTag = document.createElement('span');
+    savedTag.className = 'cat-def-saved';
+    savedTag.textContent = 'Saved ✓';
+
+    const saveBtnEl = document.createElement('button');
+    saveBtnEl.type = 'button';
+    saveBtnEl.className = 'cat-def-save';
+    saveBtnEl.textContent = 'Save';
+    saveBtnEl.addEventListener('click', async () => {
+      try {
+        await fetch(`/api/categories/${encodeURIComponent(cat.key)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ label: labelInput.value, emoji: emojiInput.value }),
+        });
+        cat.label = labelInput.value;
+        cat.emoji = emojiInput.value;
+        row.classList.remove('dirty');
+        savedTag.classList.add('show');
+        setTimeout(() => savedTag.classList.remove('show'), 1500);
+        renderCategoriesBoard(); // pill label/emoji also shows in the move-select dropdowns below
+      } catch {}
+    });
+
+    row.appendChild(saveBtnEl);
+    row.appendChild(savedTag);
+    categorySettingsListEl.appendChild(row);
+  });
+}
+
+addCategoryBtn.addEventListener('click', async () => {
+  const label = newCategoryLabelInput.value.trim();
+  if (!label) { newCategoryLabelInput.focus(); return; }
+  addCategoryBtn.disabled = true;
+  try {
+    const res = await fetch('/api/categories', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ label, emoji: newCategoryEmojiInput.value.trim() }),
+    });
+    const out = await res.json();
+    if (!res.ok) throw new Error(out.error);
+    newCategoryLabelInput.value = '';
+    newCategoryEmojiInput.value = '';
+    await loadCategoryList();
+    renderCategorySettings();
+    renderCategoriesBoard();
+  } catch (e) {
+    alert("Couldn't add category: " + e.message);
+  } finally {
+    addCategoryBtn.disabled = false;
+  }
+});
+
+async function moveCategoryDef(sorted, index, delta) {
+  const target = index + delta;
+  if (target < 0 || target >= sorted.length) return;
+  const reordered = [...sorted];
+  [reordered[index], reordered[target]] = [reordered[target], reordered[index]];
+  await Promise.all(reordered.map((cat, i) => {
+    if (cat.order === i) return null;
+    cat.order = i;
+    return fetch(`/api/categories/${encodeURIComponent(cat.key)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order: i }),
+    });
+  }));
+  renderCategorySettings();
+}
+
+function sortedByOrder(items) {
+  return [...items].sort((a, b) => (a.order - b.order) || a.title.localeCompare(b.title));
+}
+
+// Remembers which groups are collapsed across re-renders (every save
+// re-runs renderCategoriesBoard) — without this every click-to-toggle
+// would just spring back open on the next auto-refresh. Categories with
+// more than 5 templates start collapsed on first load so the page isn't
+// one giant scroll on open; the two pinned shelves stay open (they're
+// usually short) but remain manually collapsible too.
+const collapsedGroups = new Set();
+let collapsedGroupsInitialized = false;
+
+function renderCategoriesBoard() {
+  categoriesBoardEl.innerHTML = '';
+
+  if (!collapsedGroupsInitialized) {
+    collapsedGroupsInitialized = true;
+    const byCategory = {};
+    categoriesBoardList.forEach((t) => { byCategory[t.category] = (byCategory[t.category] || 0) + 1; });
+    Object.entries(byCategory).forEach(([key, count]) => { if (count > 5) collapsedGroups.add(key); });
+  }
+
+  categoriesBoardEl.appendChild(renderPinnedGroup('i-flame', 'Trending', 'trending'));
+  categoriesBoardEl.appendChild(renderPinnedGroup('i-heart', 'Recommended', 'recommended'));
+
+  const sortedCategories = [...CATEGORY_LIST].sort((a, b) => a.order - b.order);
+  sortedCategories.forEach((cat) => {
+    const items = sortedByOrder(categoriesBoardList.filter((t) => t.category === cat.key));
+    categoriesBoardEl.appendChild(renderCategoryGroup(cat, items));
+  });
+}
+
+// shared collapse/expand wiring for a group's header — click anywhere on
+// the header (not just a tiny chevron target) to toggle
+function makeCollapsible(group, header, collapseKey) {
+  const chevron = document.createElement('span');
+  chevron.className = 'cat-group-chevron';
+  chevron.innerHTML = '<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  header.appendChild(chevron);
+  header.classList.add('collapsible');
+  if (collapsedGroups.has(collapseKey)) group.classList.add('collapsed');
+  header.addEventListener('click', () => {
+    const nowCollapsed = group.classList.toggle('collapsed');
+    if (nowCollapsed) collapsedGroups.add(collapseKey); else collapsedGroups.delete(collapseKey);
+  });
+}
+
+// Trending / Recommended aren't real categories — just flags that can sit
+// on top of any category — so this section is a flat "everything currently
+// flagged" overview with a quick way to unflag, not a full per-item editor
+// (the category group below is where category/order/all three flags live).
+function renderPinnedGroup(iconId, label, flagKey) {
+  const group = document.createElement('div');
+  group.className = 'cat-group pinned';
+
+  const items = categoriesBoardList.filter((t) => t[flagKey]);
+
+  const header = document.createElement('div');
+  header.className = 'cat-group-header';
+  header.innerHTML = `<span class="emoji"><svg><use href="#${iconId}"/></svg></span><h3>${escapeHtml(label)}</h3><span class="cat-count">${items.length}</span>`;
+  group.appendChild(header);
+  makeCollapsible(group, header, `__${flagKey}`);
+
+  const body = document.createElement('div');
+  body.className = 'cat-group-body';
+  const inner = document.createElement('div');
+  inner.className = 'cat-group-inner';
+  body.appendChild(inner);
+  group.appendChild(body);
+
+  if (items.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'cat-group-empty';
+    empty.textContent = `Nothing marked ${label.toLowerCase()} yet — use the toggle in a category below.`;
+    inner.appendChild(empty);
+    return group;
+  }
+
+  items.forEach((t) => {
+    const row = document.createElement('div');
+    row.className = 'cat-row';
+    row.innerHTML = `
+      <img class="thumb" src="/admin-thumbs/${encodeURIComponent(t.slug)}.png" alt="" loading="lazy" onerror="this.style.visibility='hidden'" />
+      <div class="cat-row-title">${escapeHtml(t.title)}<span>${escapeHtml(t.category)}</span></div>
+    `;
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = `flag-toggle ${flagKey} on`;
+    removeBtn.title = `Remove from ${label}`;
+    removeBtn.innerHTML = `<svg><use href="#${iconId}"/></svg>`;
+    removeBtn.addEventListener('click', async () => {
+      t[flagKey] = false;
+      await saveCategoryMeta(t.slug, { [flagKey]: false });
+      showSavedToast();
+      renderCategoriesBoard();
+    });
+    row.appendChild(removeBtn);
+    inner.appendChild(row);
+  });
+
+  return group;
+}
+
+function renderCategoryGroup(cat, items) {
+  const group = document.createElement('div');
+  group.className = 'cat-group';
+
+  const header = document.createElement('div');
+  header.className = 'cat-group-header';
+  header.innerHTML = `<span class="emoji">${cat.emoji}</span><h3>${escapeHtml(cat.label)}</h3><span class="cat-count">${items.length}</span>`;
+  group.appendChild(header);
+  makeCollapsible(group, header, cat.key);
+
+  const body = document.createElement('div');
+  body.className = 'cat-group-body';
+  const inner = document.createElement('div');
+  inner.className = 'cat-group-inner';
+  body.appendChild(inner);
+  group.appendChild(body);
+
+  if (items.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'cat-group-empty';
+    empty.textContent = 'No templates in this category yet.';
+    inner.appendChild(empty);
+    return group;
+  }
+
+  items.forEach((t, i) => {
+    const row = document.createElement('div');
+    row.className = 'cat-row';
+
+    const orderButtons = document.createElement('div');
+    orderButtons.className = 'order-buttons';
+    const upBtn = document.createElement('button');
+    upBtn.type = 'button';
+    upBtn.innerHTML = '<svg><use href="#i-chevron-up"/></svg>';
+    upBtn.title = 'Move up — shows earlier in this category';
+    upBtn.disabled = i === 0;
+    upBtn.addEventListener('click', () => moveInCategory(cat.key, items, i, -1));
+    const downBtn = document.createElement('button');
+    downBtn.type = 'button';
+    downBtn.innerHTML = '<svg><use href="#i-chevron-down"/></svg>';
+    downBtn.title = 'Move down — shows later in this category';
+    downBtn.disabled = i === items.length - 1;
+    downBtn.addEventListener('click', () => moveInCategory(cat.key, items, i, 1));
+    orderButtons.appendChild(upBtn);
+    orderButtons.appendChild(downBtn);
+    row.appendChild(orderButtons);
+
+    const thumb = document.createElement('img');
+    thumb.className = 'thumb';
+    thumb.loading = 'lazy';
+    thumb.src = `/admin-thumbs/${encodeURIComponent(t.slug)}.png`;
+    thumb.alt = '';
+    thumb.onerror = () => { thumb.style.visibility = 'hidden'; };
+    row.appendChild(thumb);
+
+    const title = document.createElement('div');
+    title.className = 'cat-row-title';
+    title.innerHTML = `${escapeHtml(t.title)}<span>${escapeHtml(t.slug)}</span>`;
+    row.appendChild(title);
+
+    const moveSelect = document.createElement('select');
+    moveSelect.className = 'cat-move-select';
+    moveSelect.title = 'Move to a different category';
+    moveSelect.innerHTML = CATEGORY_LIST.map((c) =>
+      `<option value="${c.key}" ${c.key === cat.key ? 'selected' : ''}>${c.emoji} ${escapeHtml(c.label)}</option>`
+    ).join('');
+    moveSelect.addEventListener('change', async () => {
+      t.category = moveSelect.value;
+      await saveCategoryMeta(t.slug, { category: moveSelect.value });
+      showSavedToast();
+      renderCategoriesBoard();
+    });
+    const moveSelectWrap = document.createElement('div');
+    moveSelectWrap.className = 'cat-move-select-wrap';
+    moveSelectWrap.appendChild(moveSelect);
+    moveSelectWrap.insertAdjacentHTML('beforeend', '<svg class="cat-move-chevron"><use href="#i-chevron-down"/></svg>');
+    row.appendChild(moveSelectWrap);
+
+    const flags = document.createElement('div');
+    flags.className = 'flag-toggles';
+    flags.appendChild(makeFlagToggle(t, 'featured', 'i-star', 'Featured — pinned to the top of its category'));
+    flags.appendChild(makeFlagToggle(t, 'trending', 'i-flame', 'Trending — shown in the Trending shelf'));
+    flags.appendChild(makeFlagToggle(t, 'recommended', 'i-heart', 'Recommended — shown in the Recommended shelf'));
+    row.appendChild(flags);
+
+    inner.appendChild(row);
+  });
+
+  return group;
+}
+
+function makeFlagToggle(t, flagKey, iconId, title) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = `flag-toggle ${flagKey}${t[flagKey] ? ' on' : ''}`;
+  btn.title = title;
+  btn.innerHTML = `<svg><use href="#${iconId}"/></svg>`;
+  btn.addEventListener('click', async () => {
+    const next = !t[flagKey];
+    t[flagKey] = next;
+    await saveCategoryMeta(t.slug, { [flagKey]: next });
+    showSavedToast();
+    renderCategoriesBoard();
+  });
+  return btn;
+}
+
+// Renumbers the WHOLE category (0, 1, 2, …) instead of just swapping two
+// "order" values — every template starts at order:0, so a naive swap on
+// the very first move would swap 0 with 0 and visibly do nothing.
+async function moveInCategory(categoryKey, items, index, delta) {
+  const target = index + delta;
+  if (target < 0 || target >= items.length) return;
+  const reordered = [...items];
+  [reordered[index], reordered[target]] = [reordered[target], reordered[index]];
+  await Promise.all(reordered.map((t, i) => {
+    if (t.order === i) return null;
+    t.order = i;
+    return saveCategoryMeta(t.slug, { order: i });
+  }));
+  showSavedToast();
+  renderCategoriesBoard();
+}
+
+let savedToastTimer;
+function showSavedToast() {
+  let toast = document.getElementById('savedToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'savedToast';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = '<svg><use href="#i-check"/></svg> Saved';
+  toast.classList.add('show');
+  clearTimeout(savedToastTimer);
+  savedToastTimer = setTimeout(() => toast.classList.remove('show'), 1400);
+}
 
 // show a live-ish unread count on load without switching views
 (async () => {
@@ -538,4 +1005,4 @@ refreshMailboxBtn.addEventListener('click', loadMailbox);
   } catch {}
 })();
 
-loadTemplateList();
+loadCategoryList().then(loadTemplateList);

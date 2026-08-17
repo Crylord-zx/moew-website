@@ -22,8 +22,10 @@ const crypto = require('crypto');
 const zlib = require('zlib');
 const { extractSnapshot, writeSnapshot } = require('./admin-lib');
 const { isEnabled } = require('./template-visibility');
+const { getCategories, getMeta: getCategoryMeta } = require('./template-categories');
 const { logCreation } = require('./creations-log');
 const { getMaster: getLoveMaster } = require('./lovearea-master');
+const { IMPORTED_TEMPLATES, EDITABLE_IMPORTED_SLUGS } = require('./imported-templates');
 
 const root = __dirname;
 const templatesDir = path.join(root, 'templates');
@@ -53,7 +55,7 @@ const COMPRESSIBLE = new Set(['.html', '.js', '.css', '.json', '.svg']);
 // it's deployed at domain root, so its own JS bundle references these
 // exact absolute paths; they can't be moved under a namespaced prefix
 // without patching the (large, minified) bundle itself.
-const PUBLIC_PREFIXES = ['/templates/', '/_next/', '/cdn/', '/admin-thumbs/', '/site/', '/g/', '/assets/', '/template/'];
+const PUBLIC_PREFIXES = ['/templates/', '/_next/', '/cdn/', '/admin-thumbs/', '/site/', '/g/', '/assets/', '/template/', '/category/', '/imported/'];
 
 function isPubliclyServable(pathname) {
   if (pathname === '/') return true;
@@ -148,6 +150,12 @@ function listTemplateSlugs() {
 
 function templateFile(slug) {
   if (!/^[a-z0-9-]+$/i.test(slug)) throw new Error('invalid slug');
+  // imported templates that have been made editable live at
+  // imported/<slug>/index.html — see the matching comment in
+  // admin-server.js's templateFile() for why.
+  if (EDITABLE_IMPORTED_SLUGS.has(slug)) {
+    return path.join(root, 'imported', slug, 'index.html');
+  }
   return path.join(templatesDir, slug + '.html');
 }
 
@@ -191,6 +199,7 @@ const LOVEAREA_TEMPLATES = [
 ].map((t) => ({
   slug: `love-${t.category}-${t.design}`.toLowerCase().replace(/_/g, '-'),
   title: t.title,
+  category: t.category,
   editable: true,
   isLovearea: true,
   previewUrl: `/template/${t.category}/${t.design}?preview=true`,
@@ -256,6 +265,16 @@ async function handleApi(req, res, pathname) {
     return;
   }
 
+  // GET /api/time -> only used by the imported "second-birthday-version"
+  // template's own countdown/gate. Fixed a few days before its bundled
+  // target date so the countdown always shows real, ticking time-remaining
+  // instead of "arrived" (which would skip its click-to-reveal landing
+  // moment) — same fixed timestamp used during local integration testing.
+  if (pathname === '/api/time') {
+    const fakeNow = Date.UTC(2026, 7, 6, 12, 0, 0);
+    return sendJson(res, 200, { now: fakeNow });
+  }
+
   // GET /api/templates/:id/reviews -> a template page's own "can this
   // visitor review it" widget calls this after hydration. The original
   // site's real answer is always this same harmless shape for a fresh
@@ -270,7 +289,24 @@ async function handleApi(req, res, pathname) {
   if (req.method === 'GET' && pathname === '/api/public/templates') {
     const list = listTemplateSlugs().map((slug) => ({ slug, title: titleFromSlug(slug) }));
     const visibleLove = LOVEAREA_TEMPLATES.filter((t) => isEnabled(t.slug));
-    return sendJson(res, 200, [...list, ...visibleLove]);
+    const visibleImported = IMPORTED_TEMPLATES.filter((t) => isEnabled(t.slug));
+    const merged = [...list, ...visibleLove, ...visibleImported].map((t) => ({ ...t, ...getCategoryMeta(t.slug, t.category) }));
+    // featured templates first, then admin-assigned order (lower = earlier),
+    // ties broken by the original discovery order (stable sort)
+    merged.sort((a, b) => (b.featured - a.featured) || (a.order - b.order));
+    return sendJson(res, 200, merged);
+  }
+
+  // GET /api/public/categories -> [{key, label, emoji, count}], only
+  // categories that currently have at least one visible template
+  if (req.method === 'GET' && pathname === '/api/public/categories') {
+    const list = listTemplateSlugs().map((slug) => ({ slug, category: getCategoryMeta(slug).category }));
+    const visibleLove = LOVEAREA_TEMPLATES.filter((t) => isEnabled(t.slug)).map((t) => ({ slug: t.slug, category: getCategoryMeta(t.slug, t.category).category }));
+    const visibleImported = IMPORTED_TEMPLATES.filter((t) => isEnabled(t.slug)).map((t) => ({ slug: t.slug, category: getCategoryMeta(t.slug, t.category).category }));
+    const counts = {};
+    for (const t of [...list, ...visibleLove, ...visibleImported]) counts[t.category] = (counts[t.category] || 0) + 1;
+    const out = getCategories().filter((c) => counts[c.key] > 0).map((c) => ({ ...c, count: counts[c.key] }));
+    return sendJson(res, 200, out);
   }
 
   // GET /api/public/templates/:slug -> default content to prefill the form
@@ -570,6 +606,23 @@ function handleSiteRequest(req, res) {
       return;
     }
 
+    // GET /_next/image?url=<path>&w=..&q=.. -> Next's built-in image
+    // optimizer route, requested by the imported "second-birthday-version"
+    // template's own <Image> components. There's no real optimizer here —
+    // this just serves the original file straight through, ignoring
+    // width/quality. Only ever reached for that one imported template
+    // (its own asset paths were namespaced under /imported/... during
+    // integration, so `url` always resolves inside its own folder).
+    if (pathname === '/_next/image') {
+      const orig = new URL(req.url, 'http://x').searchParams.get('url') || '';
+      const filePath = path.join(root, orig);
+      if (filePath.startsWith(root) && fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+        return serveStatic(req, res, orig);
+      }
+      res.writeHead(404); res.end('Not found: ' + orig);
+      return;
+    }
+
     // A stale bookmark, browser autocomplete, or old link can still land
     // someone on the old customize form with a lovearea slug (?slug=love-…)
     // — that form's endpoints only know about the Next.js-template flow and
@@ -621,7 +674,11 @@ function handleSiteRequest(req, res) {
     // path is a client-side route the bundled React app resolves itself,
     // so every one of them gets the same index.html shell (SPA fallback)
     // rather than a matching file on disk.
-    const urlPath = pathname === '/' ? '/site/index.html'
+    // /category/<key> is the same gallery shell — site.js reads the
+    // category key straight out of location.pathname client-side and
+    // pre-filters, so this is a real, shareable, bookmarkable URL per
+    // category without needing a template engine on the server.
+    const urlPath = (pathname === '/' || pathname.startsWith('/category/')) ? '/site/index.html'
       : gMatch ? `/site/generated/${gMatch[1]}.html`
       : pathname.startsWith('/assets/') ? `/lovearea${pathname}`
       : LOVEAREA_ROOT_FILES.has(pathname) ? `/lovearea/root-files${pathname}`

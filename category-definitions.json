@@ -1,0 +1,25 @@
+{
+  "apology": {
+    "order": 3
+  },
+  "valentine": {
+    "order": 2
+  },
+  "pc": {
+    "label": "pc",
+    "emoji": "🏷️",
+    "order": 6
+  },
+  "other": {
+    "order": 5
+  },
+  "friendship": {
+    "order": 4
+  },
+  "anniversary": {
+    "order": 0
+  },
+  "birthday": {
+    "order": 1
+  }
+}

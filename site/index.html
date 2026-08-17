@@ -7,28 +7,94 @@
   <link rel="stylesheet" href="/site/site.css" />
 </head>
 <body>
+  <!-- shared icon set — one sprite, referenced everywhere with <use>, so
+       every icon is a real crisp vector instead of an emoji glyph that
+       renders differently per OS/font -->
+  <svg id="iconSprite" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+      <linearGradient id="gradPrimary" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#ec4899"/>
+      </linearGradient>
+      <linearGradient id="gradFire" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#f5734a"/><stop offset="1" stop-color="#f5b93d"/>
+      </linearGradient>
+    </defs>
+    <symbol id="icon-sparkle" viewBox="0 0 24 24"><path d="M12 2.5c.6 3.6 1.4 5.9 3 7.5 1.6 1.6 3.9 2.4 7.5 3-3.6.6-5.9 1.4-7.5 3-1.6 1.6-2.4 3.9-3 7.5-.6-3.6-1.4-5.9-3-7.5-1.6-1.6-3.9-2.4-7.5-3 3.6-.6 5.9-1.4 7.5-3 1.6-1.6 2.4-3.9 3-7.5Z"/></symbol>
+    <symbol id="icon-heart" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.5 8 2.3 4.5 6 4c2.2-.3 4.2.8 6 2.7C13.8 4.8 15.8 3.7 18 4c3.7.5 5.5 4 4 7.7C19.5 16.4 12 21 12 21Z"/></symbol>
+    <symbol id="icon-flower" viewBox="0 0 24 24"><path d="M12 2c1.7 0 3 1.5 3 3.3 0 1-.4 1.9-1 2.5.9-.4 2-.5 3-.1 1.7.6 2.6 2.4 2 4-.6 1.7-2.4 2.5-4 2 .6.6 1 1.5 1 2.5C16 18 14.7 19.5 13 19.5c-.4 0-.7 0-1-.2.3-.2.1 2.2-.1 2.2h-.2c-.2 0-.4-2.4-.1-2.2-.3.2-.6.2-1 .2-1.7 0-3-1.5-3-3.3 0-1 .4-1.9 1-2.5-.9.4-2 .5-3 .1-1.7-.6-2.6-2.4-2-4 .6-1.7 2.4-2.5 4-2-.6-.6-1-1.5-1-2.5C6.6 3.5 7.9 2 9.6 2c.5 0 1 .1 1.4.4C11.3 2.2 11.6 2 12 2Z"/></symbol>
+    <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+    <symbol id="icon-pencil" viewBox="0 0 24 24"><path d="m14.5 4.5 5 5L8 21l-5.5 1L4 16.5 14.5 4.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m12.5 6.5 5 5" stroke="currentColor" stroke-width="1.8"/></symbol>
+    <symbol id="icon-star" viewBox="0 0 24 24"><path d="m12 2.5 2.8 6.3 6.7.7-5 4.7 1.4 6.8L12 17.8l-6 3.2 1.4-6.8-5-4.7 6.7-.7Z"/></symbol>
+    <symbol id="icon-flame" viewBox="0 0 20 20"><path d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-2 1.5-3 1 1 3 3 3 5a3 3 0 01-.879 2.12z"/></symbol>
+    <symbol id="icon-wand" viewBox="0 0 24 24"><path d="m3 21 9-9M14.5 4.5l1 1M18 2l1 1M20.5 6.5l1 1M9 2l.7 2.3L12 5l-2.3.7L9 8l-.7-2.3L6 5l2.3-.7L9 2Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="icon-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  </svg>
+
   <header class="hero">
-    <span class="hero-deco d1" aria-hidden="true">♡</span>
-    <span class="hero-deco d2" aria-hidden="true">✿</span>
-    <span class="hero-deco d3" aria-hidden="true">♡</span>
-    <span class="hero-deco d4" aria-hidden="true">✿</span>
-    <span class="hero-deco d5" aria-hidden="true">♡</span>
-    <p class="eyebrow">✿ meow webpages ✿</p>
-    <h1>Make a tiny website for someone you love</h1>
+    <div class="hero-bg" aria-hidden="true">
+      <span class="blob b1"></span>
+      <span class="blob b2"></span>
+      <span class="blob b3"></span>
+      <!-- deliberately no viewBox: without one, 1 SVG unit = 1 real CSS
+           pixel regardless of the hero's (non-square) aspect ratio, so the
+           pattern tiles stay perfect squares instead of being stretched
+           to fit a 400x400 viewBox into a wide rectangle -->
+      <svg class="hero-linegrid">
+        <defs>
+          <pattern id="lineGrid" width="22" height="22" patternUnits="userSpaceOnUse">
+            <path d="M22 0H0V22" fill="none" stroke="currentColor" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#lineGrid)"/>
+      </svg>
+    </div>
+    <svg class="hero-deco d1" aria-hidden="true"><use href="#icon-heart"/></svg>
+    <svg class="hero-deco d2" aria-hidden="true"><use href="#icon-sparkle"/></svg>
+    <svg class="hero-deco d3" aria-hidden="true"><use href="#icon-flower"/></svg>
+    <svg class="hero-deco d4" aria-hidden="true"><use href="#icon-heart"/></svg>
+    <svg class="hero-deco d5" aria-hidden="true"><use href="#icon-sparkle"/></svg>
+
+    <p class="eyebrow"><svg class="eyebrow-icon"><use href="#icon-wand"/></svg> meow webpages <svg class="eyebrow-icon"><use href="#icon-wand"/></svg></p>
+    <h1><span class="shimmer-text">Make a tiny website</span><br/>for someone you love</h1>
     <p class="sub">Pick a design, add your own words and photos, and get a private link to send them — done in a couple of minutes.</p>
+
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input id="searchInput" type="text" placeholder="Search templates… (e.g. birthday, apology, cute)" autocomplete="off" />
+    </div>
+
+    <div id="heroShowcase" class="hero-showcase" aria-hidden="true"></div>
   </header>
 
-  <main class="gallery-wrap">
-    <div id="gallery" class="gallery">
-      <div class="loading-row"><span class="spinner"></span> Loading templates…</div>
+  <div class="marquee-strip">
+    <div id="marqueeTrack" class="marquee-track"></div>
+  </div>
+
+  <nav id="categoryNav" class="category-nav" aria-label="Categories">
+    <div id="categoryPills" class="category-pills">
+      <span class="pill-highlight" aria-hidden="true"></span>
+      <button class="pill active" data-category="" type="button"><svg class="pill-icon"><use href="#icon-grid"/></svg> All</button>
     </div>
+  </nav>
+
+  <main class="gallery-wrap">
+    <p id="resultCount" class="result-count" hidden></p>
+    <div id="gallery" class="gallery">
+      <div class="skeleton-grid">
+        <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+      </div>
+    </div>
+    <p id="noResults" class="no-results" hidden>No templates match your search. Try a different word or category.</p>
   </main>
 
   <footer>
+    <svg class="footer-wave" viewBox="0 0 400 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0 12 Q 25 0 50 12 T 100 12 T 150 12 T 200 12 T 250 12 T 300 12 T 350 12 T 400 12" fill="none" stroke="currentColor" stroke-width="2"/></svg>
     <p>Made with your own templates, for your own people.</p>
   </footer>
 
-  <a class="ig-badge" href="https://instagram.com/anshxr.yn" target="_blank" rel="noopener">✿ @anshxr.yn</a>
+  <a class="ig-badge" href="https://instagram.com/anshxr.yn" target="_blank" rel="noopener"><svg class="ig-badge-icon"><use href="#icon-sparkle"/></svg> @anshxr.yn</a>
 
   <div id="browserPromptOverlay" hidden>
     <div id="browserPromptCard">

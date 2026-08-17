@@ -12,6 +12,9 @@ const path = require('path');
 const crypto = require('crypto');
 const { extractSnapshot, writeSnapshot } = require('./admin-lib');
 const { isEnabled, setEnabled } = require('./template-visibility');
+const { getCategories, setCategoryDef, addCategory, getMeta: getCategoryMeta, setMeta: setCategoryMeta } = require('./template-categories');
+const { IMPORTED_TEMPLATES, EDITABLE_IMPORTED_SLUGS } = require('./imported-templates');
+const IMPORTED_SLUGS = new Set(IMPORTED_TEMPLATES.map((t) => t.slug));
 const { listCreations } = require('./creations-log');
 
 const root = __dirname;
@@ -173,6 +176,14 @@ function listTemplateSlugs() {
 function templateFile(slug) {
   // guard against path traversal — slug must be a bare filename component
   if (!/^[a-z0-9-]+$/i.test(slug)) throw new Error('invalid slug');
+  // imported templates that have been made editable (Format 2 patched —
+  // window.__PAGE_DATA__ injected) live at imported/<slug>/index.html,
+  // not templates/<slug>.html — everything else (extractSnapshot,
+  // writeSnapshot, backups, history) is agnostic to file location, so
+  // this one branch is all that's needed to reuse the whole pipeline.
+  if (EDITABLE_IMPORTED_SLUGS.has(slug)) {
+    return path.join(root, 'imported', slug, 'index.html');
+  }
   return path.join(templatesDir, slug + '.html');
 }
 
@@ -276,8 +287,69 @@ async function handleApi(req, res, pathname) {
       isLovearea: true,
       hasMaster: !!getLoveMaster(slug),
       previewUrl: `/template/${entry.category}/${entry.design}?preview=true`,
+      category: entry.category,
     }));
-    return sendJson(res, 200, [...list, ...loveList]);
+    const importedList = IMPORTED_TEMPLATES.map((t) => ({ ...t, enabled: isEnabled(t.slug) }));
+    const merged = [...list, ...loveList, ...importedList].map((t) => ({ ...t, ...getCategoryMeta(t.slug, t.category) }));
+    return sendJson(res, 200, merged);
+  }
+
+  // GET /api/categories -> the live taxonomy (defaults + any saved
+  // label/emoji/order overrides), for populating the category <select> in
+  // every template row and the category-settings panel
+  if (req.method === 'GET' && pathname === '/api/categories') {
+    return sendJson(res, 200, getCategories());
+  }
+
+  // POST /api/categories -> {label, emoji?}. Creates a brand-new category
+  // (auto-slugified key, placed at the end of the pill order) — separate
+  // from the fixed default six, but works identically everywhere else
+  // (templates can be assigned to it, it gets its own pill/URL, etc.)
+  if (req.method === 'POST' && pathname === '/api/categories') {
+    try {
+      const { label, emoji } = await readJsonBody(req);
+      const cat = addCategory({ label, emoji });
+      return sendJson(res, 200, { ok: true, ...cat });
+    } catch (e) {
+      return sendJson(res, 400, { error: e.message });
+    }
+  }
+
+  // POST /api/categories/:key -> {label?, emoji?, order?}. Renames a
+  // category's display text/icon and/or moves it earlier or later in the
+  // pill nav — the category KEY itself (birthday, valentine, …) is fixed,
+  // since it's baked into every already-saved template's category field.
+  const categoryDefMatch = pathname.match(/^\/api\/categories\/([^/]+)$/);
+  if (req.method === 'POST' && categoryDefMatch) {
+    try {
+      const { label, emoji, order } = await readJsonBody(req);
+      const def = setCategoryDef(categoryDefMatch[1], { label, emoji, order });
+      return sendJson(res, 200, { ok: true, ...def });
+    } catch (e) {
+      return sendJson(res, 400, { error: e.message });
+    }
+  }
+
+  // POST /api/templates/:slug/category -> {category?, order?, featured?,
+  // trending?, recommended?}. Lets admin put any template (classic or
+  // lovearea) into a category, set its sort order within the gallery, and
+  // flag it as featured / trending / recommended — the public gallery
+  // reads this same stored metadata via template-categories.js.
+  const categoryMatch = pathname.match(/^\/api\/templates\/([^/]+)\/category$/);
+  if (req.method === 'POST' && categoryMatch) {
+    try {
+      const slug = categoryMatch[1];
+      const loveEntry = LOVEAREA_SCHEMAS[slug];
+      if (!loveEntry && !IMPORTED_SLUGS.has(slug)) {
+        templateFile(slug);
+        if (!fs.existsSync(templateFile(slug))) throw new Error('template not found');
+      }
+      const { category, order, featured, trending, recommended } = await readJsonBody(req);
+      const meta = setCategoryMeta(slug, { category, order, featured, trending, recommended }, loveEntry && loveEntry.category);
+      return sendJson(res, 200, { ok: true, ...meta });
+    } catch (e) {
+      return sendJson(res, 400, { error: e.message });
+    }
   }
 
   // GET /api/creations -> every shareable link anyone has generated on
@@ -291,7 +363,7 @@ async function handleApi(req, res, pathname) {
   if (req.method === 'POST' && visibilityMatch) {
     try {
       const slug = visibilityMatch[1];
-      if (!LOVEAREA_SCHEMAS[slug]) {
+      if (!LOVEAREA_SCHEMAS[slug] && !IMPORTED_SLUGS.has(slug)) {
         templateFile(slug); // throws if slug is invalid — also confirms it exists below
         if (!fs.existsSync(templateFile(slug))) throw new Error('template not found');
       }

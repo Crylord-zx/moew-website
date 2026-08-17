@@ -1,0 +1,22 @@
+{
+  "love-birthday-bestie-birthday": {
+    "trending": false,
+    "recommended": true
+  },
+  "love-birthday-birthday-template": {
+    "recommended": true,
+    "trending": false
+  },
+  "love-birthday-dreamy-cloudscape": {
+    "trending": true
+  },
+  "love-birthday-midnight-romance": {
+    "trending": true
+  },
+  "love-birthday-premium-surprise": {
+    "recommended": true
+  },
+  "love-birthday-disco-bestie": {
+    "category": "pc"
+  }
+}

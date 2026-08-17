@@ -6,6 +6,13 @@
   --color-border: #e6ddfa;
   --color-text: #241c33;
   --color-muted: #7a7188;
+  --gradient-brand: linear-gradient(90deg, #7c3aed, #ec4899);
+  --gradient-brand-3: linear-gradient(90deg, #5b21b6, #ec4899, #7c3aed);
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --shadow-soft: 0 8px 24px rgba(124, 58, 237, 0.08);
+  --shadow-lift: 0 20px 44px rgba(124, 58, 237, 0.2);
+  --radius-lg: 20px;
 }
 
 * { box-sizing: border-box; }
@@ -14,7 +21,10 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: var(--color-text);
-  background: var(--color-bg);
+  background:
+    radial-gradient(900px 500px at 15% -10%, rgba(124, 58, 237, 0.07), transparent 60%),
+    radial-gradient(700px 460px at 100% 10%, rgba(236, 72, 153, 0.06), transparent 55%),
+    var(--color-bg);
   animation: pageFadeIn 0.4s ease both;
 }
 img { max-width: 100%; display: block; }
@@ -30,6 +40,17 @@ img { max-width: 100%; display: block; }
   to { opacity: 1; transform: translateY(0); }
 }
 .fade-in { animation: fadeInUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* scroll-triggered reveal for gallery cards — IntersectionObserver in
+   site.js adds .in-view the moment each card scrolls into the viewport,
+   instead of every card animating at once on mount (which, for a 70+
+   item grid, meant most of it "animated" while still off-screen and
+   invisible — wasted motion nobody actually saw) */
+.reveal { opacity: 0; transform: translateY(26px) scale(0.98); transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+.reveal.in-view { opacity: 1; transform: translateY(0) scale(1); }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
 
 /* respect users who've asked for reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -72,92 +93,355 @@ img { max-width: 100%; display: block; }
 .hero {
   position: relative;
   text-align: center;
-  padding: 72px 20px 40px;
-  background: radial-gradient(circle at top, rgba(124,58,237,0.10), transparent 60%);
+  padding: 84px 20px 44px;
   animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   overflow: hidden;
 }
 .hero .eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
   text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px;
   font-weight: 700; color: var(--color-primary);
   animation: fadeInUp 0.5s ease both;
+  background: #fff; border: 1px solid var(--color-border); border-radius: 999px;
+  padding: 7px 16px; box-shadow: var(--shadow-soft);
 }
+.eyebrow-icon { width: 12px; height: 12px; fill: var(--color-pink); animation: spinSlow 5s linear infinite; }
+@keyframes spinSlow { to { transform: rotate(360deg); } }
+
 .hero h1 {
-  font-family: Georgia, serif; font-size: clamp(28px, 5vw, 42px); margin: 12px 0;
+  font-family: Georgia, serif; font-size: clamp(30px, 5.2vw, 46px); margin: 20px 0 12px;
+  line-height: 1.15; letter-spacing: -0.01em;
   animation: fadeInUp 0.55s ease 0.05s both;
-  background: linear-gradient(90deg, var(--color-primary-dark), var(--color-pink), var(--color-primary), var(--color-primary-dark));
-  background-size: 300% auto;
+}
+.hero h1 .shimmer-text {
+  background: linear-gradient(100deg, var(--color-primary-dark) 30%, var(--color-pink) 45%, #fff 50%, var(--color-pink) 55%, var(--color-primary) 70%);
+  background-size: 260% auto;
   -webkit-background-clip: text; background-clip: text; color: transparent;
   -webkit-text-fill-color: transparent;
-  animation: fadeInUp 0.55s ease 0.05s both, gradientShift 6s ease-in-out infinite;
+  animation: shimmerSweep 4.5s ease-in-out infinite;
+}
+@keyframes shimmerSweep {
+  0% { background-position: 120% 50%; }
+  100% { background-position: -20% 50%; }
 }
 .hero .sub {
   color: var(--color-muted); max-width: 520px; margin: 0 auto;
   animation: fadeInUp 0.55s ease 0.1s both;
-  position: relative;
+  position: relative; font-size: 15px;
 }
 
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-/* soft floating decorative hearts behind the hero copy */
+/* floating decorative SVG icons (hearts / sparkles / flower) behind the
+   hero copy — real vectors instead of emoji glyphs so they render
+   identically (and can be gradient-filled) on every platform */
 .hero-deco {
   position: absolute; pointer-events: none; z-index: 0;
-  font-size: 22px; opacity: 0.35; color: var(--color-pink);
-  animation: heroFloat 6s ease-in-out infinite;
+  width: 22px; height: 22px; opacity: 0.3; fill: url(#gradPrimary);
+  animation: heroFloat 7s ease-in-out infinite;
 }
-.hero-deco.d1 { top: 18%; left: 8%; animation-delay: 0s; font-size: 26px; }
-.hero-deco.d2 { top: 60%; left: 15%; animation-delay: 1.2s; font-size: 16px; color: var(--color-primary); }
-.hero-deco.d3 { top: 25%; right: 10%; animation-delay: 0.6s; font-size: 20px; }
-.hero-deco.d4 { top: 65%; right: 16%; animation-delay: 1.8s; font-size: 28px; color: var(--color-primary); }
-.hero-deco.d5 { top: 8%; left: 45%; animation-delay: 2.4s; font-size: 14px; }
-.hero > *:not(.hero-deco) { position: relative; z-index: 1; }
+.hero-deco.d1 { top: 16%; left: 8%; animation-delay: 0s; width: 28px; height: 28px; }
+.hero-deco.d2 { top: 62%; left: 14%; animation-delay: 1.2s; width: 16px; height: 16px; }
+.hero-deco.d3 { top: 24%; right: 9%; animation-delay: 0.6s; width: 22px; height: 22px; }
+.hero-deco.d4 { top: 66%; right: 15%; animation-delay: 1.8s; width: 30px; height: 30px; }
+.hero-deco.d5 { top: 8%; left: 46%; animation-delay: 2.4s; width: 15px; height: 15px; }
+.hero > *:not(.hero-deco):not(.hero-bg) { position: relative; z-index: 1; }
 
 @keyframes heroFloat {
-  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.25; }
-  50% { transform: translateY(-16px) rotate(8deg); opacity: 0.5; }
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.22; }
+  50% { transform: translateY(-18px) rotate(10deg) scale(1.12); opacity: 0.5; }
 }
 
 @media (max-width: 600px) {
   .hero-deco { display: none; }
 }
 
+/* soft animated background blobs — transform-only animation (cheap),
+   blur is static (never recalculated on scroll/mousemove) so this stays
+   smooth even on low-end phones */
+.hero-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.blob {
+  position: absolute; border-radius: 50%; filter: blur(50px); opacity: 0.35;
+  will-change: transform;
+}
+.blob.b1 { width: 260px; height: 260px; left: -60px; top: -40px; background: var(--color-primary); animation: blobFloat1 16s ease-in-out infinite; }
+.blob.b2 { width: 220px; height: 220px; right: -50px; top: 10px; background: var(--color-pink); animation: blobFloat2 20s ease-in-out infinite; }
+.blob.b3 { width: 200px; height: 200px; left: 42%; bottom: -80px; background: var(--color-primary-dark); opacity: 0.2; animation: blobFloat3 18s ease-in-out infinite; }
+@keyframes blobFloat1 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(30px, 24px) scale(1.12); } }
+@keyframes blobFloat2 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-24px, 20px) scale(1.08); } }
+@keyframes blobFloat3 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(20px, -16px) scale(1.15); } }
+@media (max-width: 600px) {
+  .blob { filter: blur(34px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .blob { animation: none; }
+}
+
+/* faint graph-paper line grid layered over the mesh gradient for depth —
+   fades out toward the edges via a radial mask so it doesn't read as a
+   hard-edged rectangle (or, at higher opacity, ruled notebook paper) */
+.hero-linegrid {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  color: var(--color-primary); opacity: 0.14;
+  -webkit-mask-image: radial-gradient(65% 65% at 50% 35%, #000 25%, transparent 75%);
+  mask-image: radial-gradient(65% 65% at 50% 35%, #000 25%, transparent 75%);
+}
+@media (max-width: 600px) { .hero-linegrid { opacity: 0.09; } }
+
+/* fan of real template thumbnails beneath the hero copy — a little
+   "product showcase" moment (populated in site.js from whatever's
+   currently featured/first in the gallery) instead of the hero being
+   just text+blobs, each card tilted at its own fixed angle and floating
+   independently so the row reads as alive, not a static screenshot row */
+.hero-showcase {
+  display: flex; justify-content: center; align-items: flex-end;
+  gap: 0; margin: 46px auto 0; max-width: 640px; height: 150px;
+}
+.showcase-card {
+  width: 84px; height: 130px; border-radius: 14px; overflow: hidden; flex-shrink: 0;
+  border: 3px solid #fff; box-shadow: 0 14px 30px rgba(124, 58, 237, 0.22);
+  background: #f1ecfb; margin: 0 -10px;
+  animation: showcaseFloat 5s ease-in-out infinite, showcaseIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.showcase-card img { width: 100%; height: 100%; object-fit: cover; }
+.showcase-card:nth-child(1) { transform: rotate(-14deg) translateY(10px); z-index: 1; animation-delay: 0s, 0s; }
+.showcase-card:nth-child(2) { transform: rotate(-6deg) translateY(-6px); z-index: 2; animation-delay: 0.4s, 0.08s; }
+.showcase-card:nth-child(3) { width: 96px; height: 148px; transform: rotate(0deg) translateY(-16px); z-index: 3; animation-delay: 0.8s, 0.16s; }
+.showcase-card:nth-child(4) { transform: rotate(6deg) translateY(-6px); z-index: 2; animation-delay: 1.2s, 0.24s; }
+.showcase-card:nth-child(5) { transform: rotate(14deg) translateY(10px); z-index: 1; animation-delay: 1.6s, 0.32s; }
+@keyframes showcaseFloat {
+  0%, 100% { margin-top: 0; }
+  50% { margin-top: -10px; }
+}
+@keyframes showcaseIn {
+  from { opacity: 0; transform: translateY(30px) rotate(0deg) scale(0.8); }
+}
+@media (max-width: 640px) {
+  .hero-showcase { max-width: 100%; height: 120px; margin-top: 32px; }
+  .showcase-card { width: 62px; height: 96px; }
+  .showcase-card:nth-child(3) { width: 72px; height: 112px; }
+}
+@media (max-width: 460px) {
+  .showcase-card:nth-child(1), .showcase-card:nth-child(5) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .showcase-card { animation: none; }
+}
+
+/* auto-scrolling marquee of category names between the hero and the pill
+   nav — alternating outline/solid serif type, looping seamlessly (the
+   track's content is rendered twice back-to-back and slides exactly -50%) */
+.marquee-strip {
+  overflow: hidden; padding: 14px 0; margin-top: 12px;
+  border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border);
+  background: linear-gradient(90deg, rgba(124,58,237,0.03), rgba(236,72,153,0.03));
+}
+.marquee-track {
+  display: flex; align-items: center; gap: 40px; width: max-content;
+  animation: marqueeScroll 26s linear infinite;
+}
+.marquee-strip:hover .marquee-track { animation-play-state: paused; }
+.marquee-item { font-size: 26px; white-space: nowrap; line-height: 1; }
+.marquee-dot { color: var(--color-pink); font-size: 14px; }
+
+/* six distinct typographic treatments, cycled per word (see
+   MARQUEE_VARIANTS_COUNT in site.js) — mixing serif/sans, weight,
+   italic/upright and color so the row reads as curated type, not a single
+   font repeated down the line. All solid-filled (no hollow/outline text —
+   reads as thin/washed-out at this size, especially on italics). */
+.marquee-item.f0 {
+  font-family: Georgia, serif; font-style: italic; font-weight: 700;
+  color: var(--color-primary); text-transform: capitalize;
+}
+.marquee-item.f1 {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-weight: 800;
+  color: var(--color-primary-dark); text-transform: uppercase; letter-spacing: -0.01em;
+}
+.marquee-item.f2 {
+  font-family: Georgia, 'Times New Roman', serif; font-weight: 700;
+  color: var(--color-pink); text-transform: capitalize; font-size: 30px;
+}
+.marquee-item.f3 {
+  font-family: 'Courier New', monospace; font-weight: 700;
+  color: var(--color-primary); text-transform: uppercase; letter-spacing: 0.06em; font-size: 21px;
+}
+.marquee-item.f4 {
+  font-family: Georgia, serif; font-style: italic; font-weight: 700;
+  color: var(--color-pink); text-transform: capitalize; font-size: 29px;
+}
+.marquee-item.f5 {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-weight: 700;
+  color: var(--color-primary-dark); text-transform: capitalize;
+}
+@media (max-width: 600px) {
+  .marquee-item.f2, .marquee-item.f4 { font-size: 22px; }
+  .marquee-item.f3 { font-size: 16px; }
+}
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (max-width: 600px) {
+  .marquee-item { font-size: 19px; }
+  .marquee-track { gap: 26px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}
+
+/* search box */
+.search-wrap {
+  position: relative; max-width: 420px; margin: 22px auto 0;
+  animation: fadeInUp 0.55s ease 0.15s both;
+}
+.search-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  width: 17px; height: 17px; color: var(--color-muted); pointer-events: none;
+}
+#searchInput {
+  width: 100%; border: 1px solid var(--color-border); border-radius: 999px;
+  padding: 12px 16px 12px 40px; font-size: 14px; font-family: inherit; color: var(--color-text);
+  background: #fff; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.08);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+#searchInput:focus {
+  outline: none; border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+/* category pills nav */
+.category-nav {
+  max-width: 1100px; margin: 0 auto; padding: 4px 24px 0;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.category-nav::-webkit-scrollbar { display: none; }
+.category-pills {
+  position: relative;
+  display: flex; gap: 8px; padding: 4px 0 14px; width: max-content; min-width: 100%;
+  justify-content: center;
+}
+@media (max-width: 700px) {
+  .category-pills { justify-content: flex-start; }
+}
+.pill {
+  position: relative; z-index: 1;
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px;
+  background: #fff; border: 1px solid var(--color-border); border-radius: 999px;
+  padding: 9px 18px; font-size: 13px; font-weight: 600; color: var(--color-text);
+  cursor: pointer; white-space: nowrap;
+  transition: background 0.15s ease, color 0.2s ease 0.05s, border-color 0.15s ease, transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.pill-icon { width: 13px; height: 13px; flex-shrink: 0; }
+.pill-count { margin-left: 2px; }
+.pill:hover { transform: translateY(-1px); border-color: var(--color-primary); }
+.pill:active { transform: translateY(0) scale(0.96); }
+.pill.active {
+  background: transparent;
+  border-color: transparent; color: #fff;
+}
+.pill-count {
+  font-size: 11px; font-weight: 700; opacity: 0.7;
+  background: rgba(0,0,0,0.06); border-radius: 999px; padding: 1px 7px;
+}
+.pill.active .pill-count { background: rgba(255,255,255,0.25); opacity: 1; }
+
+/* a single shared gradient pill that glides (not re-fades) to whichever
+   pill is active, sized/positioned via JS from the target's own
+   getBoundingClientRect — much livelier than a plain background swap */
+.pill-highlight {
+  position: absolute; z-index: 0; top: 0; left: 0;
+  border-radius: 999px;
+  background: var(--gradient-brand);
+  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.3);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  opacity: 0;
+}
+.pill-highlight.ready { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .pill-highlight { transition: none; }
+}
+
+.result-count { color: var(--color-muted); font-size: 13px; margin: 0 0 14px; }
+.no-results { text-align: center; color: var(--color-muted); padding: 60px 20px; font-size: 14px; }
+
+.featured-badge {
+  position: absolute; top: 10px; left: 10px; z-index: 2;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-pink));
+  color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 0.02em;
+  padding: 7px 14px 7px 10px; border-radius: 999px; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3);
+  animation: badgePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.featured-badge svg { width: 12px; height: 12px; fill: currentColor; flex-shrink: 0; }
+.featured-badge.trending { background: linear-gradient(90deg, #f5734a, #f5a93d); box-shadow: 0 4px 10px rgba(245, 115, 74, 0.35); }
+.featured-badge.recommended { background: linear-gradient(90deg, #7c3aed, #a78bfa); box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3); }
+@keyframes badgePop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+
+/* smooth cross-fade when the gallery grid re-renders (category switch /
+   search) via the View Transitions API — no-ops on browsers that don't
+   support startViewTransition */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.25s; }
+
 .gallery-wrap { max-width: 1100px; margin: 0 auto; padding: 20px 24px 80px; }
 .gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 20px;
+  gap: 22px;
 }
 .muted { color: var(--color-muted); }
 
 .card {
   position: relative;
-  background: #fff; border: 1px solid var(--color-border); border-radius: 18px;
+  background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border); border-radius: var(--radius-lg);
   text-decoration: none; color: inherit;
-  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.08);
-  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
   display: block;
+  transform: perspective(800px) rotateX(0) rotateY(0);
+  will-change: transform;
 }
+/* animated gradient ring that fades in around the card on hover — a
+   pseudo-element sitting just behind it (not a border, so it never
+   affects layout/box size) */
+.card::before {
+  content: ""; position: absolute; inset: -1.5px; z-index: -1; border-radius: inherit;
+  background: conic-gradient(from var(--ring-angle, 0deg), var(--color-primary), var(--color-pink), #ffb703, var(--color-primary));
+  opacity: 0; transition: opacity 0.35s ease;
+}
+.card:hover::before { opacity: 1; animation: ringSpin 3s linear infinite; }
+@keyframes ringSpin { to { --ring-angle: 360deg; } }
+@property --ring-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+
 .card:hover {
-  transform: translateY(-5px) scale(1.015);
-  box-shadow: 0 16px 36px rgba(124, 58, 237, 0.18), 0 0 0 3px rgba(124, 58, 237, 0.12);
-  border-color: var(--color-primary);
-  animation: cardGlowPulse 1.8s ease-in-out infinite;
+  box-shadow: var(--shadow-lift);
 }
-@keyframes cardGlowPulse {
-  0%, 100% { box-shadow: 0 16px 36px rgba(124, 58, 237, 0.18), 0 0 0 3px rgba(124, 58, 237, 0.12); }
-  50% { box-shadow: 0 18px 40px rgba(236, 72, 153, 0.22), 0 0 0 4px rgba(236, 72, 153, 0.18); }
-}
+.card .thumb-wrap { position: relative; overflow: hidden; border-radius: 18px 18px 0 0; }
 .card .thumb {
   width: 100%; height: 200px; object-fit: cover; background: #f1ecfb;
-  transition: transform 0.4s ease;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.card:hover .thumb { transform: scale(1.05); }
+.card:hover .thumb { transform: scale(1.08); }
 .card .thumb { will-change: transform; }
-.card { --thumb-clip: 18px 18px 0 0; }
-.card .thumb { border-radius: var(--thumb-clip); }
+/* dark scrim + hover-reveal actions over the image, like a streaming-app
+   tile — desktop-only (any device with a real hover) so touch users
+   still get the always-visible buttons in .card-body below */
+.thumb-scrim {
+  position: absolute; inset: 0; opacity: 0;
+  background: linear-gradient(to top, rgba(20, 10, 35, 0.78) 0%, rgba(20, 10, 35, 0.15) 55%, transparent 80%);
+  transition: opacity 0.3s ease;
+  display: flex; align-items: flex-end; justify-content: center; padding: 14px;
+}
+.thumb-hover-actions { display: flex; gap: 8px; width: 100%; transform: translateY(10px); transition: transform 0.3s ease; }
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .thumb-scrim { opacity: 1; }
+  .card:hover .thumb-hover-actions { transform: translateY(0); }
+  /* the hover overlay above already surfaces Preview/Customize on
+     hover-capable devices, so the always-visible row in .card-body would
+     just be a redundant duplicate on desktop — touch devices (no real
+     hover) never get .thumb-hover-actions, so this stays visible there */
+  .card .card-actions.mobile-only { display: none; }
+}
 .card h3 { transition: color 0.15s ease; }
 .card:hover h3 { color: var(--color-primary-dark); }
 .card .card-body { padding: 14px 16px; }
@@ -165,9 +449,16 @@ img { max-width: 100%; display: block; }
 .card p { margin: 0; font-size: 12px; color: var(--color-muted); line-height: 1.5; max-height: 3em; overflow: hidden; }
 .card-actions { display: flex; gap: 8px; }
 .card-actions .btn { flex: 1; }
+.card-actions .btn svg { width: 13px; height: 13px; flex-shrink: 0; }
 .btn.small { padding: 8px 10px; font-size: 12px; }
 
-footer { text-align: center; padding: 30px; color: var(--color-muted); font-size: 13px; }
+@media (prefers-reduced-motion: reduce) {
+  .card { transform: none !important; }
+  .card::before { animation: none !important; }
+}
+
+footer { text-align: center; padding: 10px 30px 34px; color: var(--color-muted); font-size: 13px; }
+.footer-wave { width: 140px; height: 12px; color: var(--color-border); margin: 0 auto 10px; display: block; }
 
 /* small floating Instagram credit, shown on every page of the site */
 .ig-badge {
@@ -183,6 +474,21 @@ footer { text-align: center; padding: 30px; color: var(--color-muted); font-size
 }
 .ig-badge:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 10px 22px rgba(124, 58, 237, 0.26); }
 .ig-badge:active { transform: translateY(0) scale(0.97); }
+.ig-badge-icon { width: 11px; height: 11px; fill: var(--color-pink); }
+
+/* skeleton loading grid — shown while /api/public/templates is in flight,
+   replaces the old plain spinner+text row with something that actually
+   previews the layout about to appear */
+.skeleton-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 22px; }
+.skeleton-card {
+  height: 268px; border-radius: var(--radius-lg);
+  background: linear-gradient(100deg, #f1ecfb 30%, #faf7ff 50%, #f1ecfb 70%);
+  background-size: 220% 100%;
+  animation: skeletonShimmer 1.4s ease-in-out infinite;
+  border: 1px solid var(--color-border);
+}
+@keyframes skeletonShimmer { 0% { background-position: 140% 0; } 100% { background-position: -40% 0; } }
+@media (prefers-reduced-motion: reduce) { .skeleton-card { animation: none; } }
 
 /* ===================== customize page ===================== */
 /* align-items: flex-start (instead of the flex default, stretch) so the
@@ -372,14 +678,21 @@ footer { text-align: center; padding: 30px; color: var(--color-muted); font-size
 @media (max-width: 600px) {
   .hero { padding: 44px 18px 28px; }
   .hero .sub { font-size: 14px; }
+  .search-wrap { margin-top: 18px; }
+  #searchInput { font-size: 16px; } /* 16px stops iOS Safari auto-zooming on focus */
+  .category-nav { padding: 4px 16px 0; }
+  .pill { padding: 7px 13px; font-size: 12.5px; }
 
-  .gallery-wrap { padding: 16px 16px 90px; }
-  .gallery { gap: 14px; grid-template-columns: 1fr 1fr; }
+  .gallery-wrap, .skeleton-grid { padding: 16px 16px 90px; }
+  .gallery, .skeleton-grid { gap: 14px; grid-template-columns: 1fr 1fr; }
+  .skeleton-card { height: 190px; }
   .card .thumb { height: 130px; }
   .card .card-body { padding: 10px 12px; }
   .card h3 { font-size: 13px; margin-bottom: 8px; }
   .card-actions { flex-direction: column; gap: 6px; }
   .btn.small { padding: 9px 10px; }
+  /* no real hover on touch, so the always-visible actions stay — this
+     just matches the desktop media query's naming, nothing to hide here */
 
   #customizeSidebar { padding: 18px 16px; }
   #customizePreviewPane { padding: 18px 16px 90px; }
